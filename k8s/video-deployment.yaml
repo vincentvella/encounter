@@ -27,22 +27,4 @@ spec:
         - name: video
           image: vincentvella/encounter-video
           ports:
-            - containerPort: 5000
-          env:
-            - name: REDIS_HOST
-              value: redis-service
-            - name: REDIS_PORT
-              value: "6379"
-            - name: PG_USER
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: pgpassword
-                  key: PGPASSWORD
-            - name: PG_HOST
-              value: postgres-service
-            - name: PGPORT
-              value: "5432"
-            - name: PGDATABASE
-              value: postgres
+            - containerPort: 9000

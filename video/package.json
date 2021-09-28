@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "ts-node-dev ./src/index.ts",
-    "start": "tsc && node ./lib/src/index.js",
+    "start": "tsc && node ./dist/index.js",
     "types": "rm -rf src/interfaces && ts-node ./scripts/types.ts",
     "gen:env": "npx gen-env-types .env -o src/types/env.d.ts -e ."
   },

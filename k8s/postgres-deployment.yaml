@@ -25,32 +25,59 @@ spec:
         component: postgres
     spec:
       volumes:
-        - name: postgres-storage
+        - name: postgres-pv-claim
           persistentVolumeClaim:
-            claimName: database-persistent-volume-claim
+            claimName: postgres-pv-claim
       containers:
         - name: postgres
           image: postgres
           ports:
             - containerPort: 5432
           volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
-              subPath: postgres
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-pv-claim
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
-                secretKeyRef:
-                  name: pgpassword
-                  key: PGPASSWORD
+                configMapKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: config-map
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_DB
+                  name: config-map
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_USER
+                  name: config-map
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-storage
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 100M
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: database-persistent-volume-claim
+  labels:
+    app: postgres
+  name: postgres-pv-claim
 spec:
+  storageClassName: manual
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
+      storage: 100M

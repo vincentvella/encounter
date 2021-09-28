@@ -13,7 +13,7 @@ spec:
           - path: /video/?(.*)
             backend:
               serviceName: video-service
-              servicePort: 5000
+              servicePort: 9000
           # TODO: Add when frontend is in ingress
           # - path: /?(.*)
           #   backend:
