@@ -16,3 +16,10 @@ deploy:
     - k8s/postgres-deployment.yaml
     - k8s/redis-deployment.yaml
     - k8s/video-deployment.yaml
+portForward:
+  - resourceType: deployment
+    resourceName: video-deployment
+    port: 9000
+  - resourceType: deployment
+    resourceName: postgres-deployment
+    port: 5432

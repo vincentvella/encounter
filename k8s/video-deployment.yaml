@@ -6,8 +6,8 @@ spec:
   selector:
     component: video
   ports:
-    - port: 5000
-      targetPort: 5000
+    - port: 9000
+      targetPort: 9000
 ---
 apiVersion: apps/v1
 kind: Deployment
