@@ -1,7 +1,7 @@
 
 FROM node:alpine
 
-WORKDIR '/app'
+WORKDIR /usr/src/video
 
 COPY package.json .
 COPY yarn.lock .

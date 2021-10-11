@@ -1,9 +1,0 @@
-{
-  "Extensions": [
-    {
-      "Name": "ngrok",
-      "ExtensionRegistry": "https://github.com/tilt-dev/tilt-extensions",
-      "TimeFetched": "2021-09-26T02:09:48.093287-04:00"
-    }
-  ]
-}

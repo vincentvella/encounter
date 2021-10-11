@@ -1,0 +1,32 @@
+version: '3'
+
+services: 
+  postgres:
+    # We use the predefined Postgres image
+    image: postgres:13.4
+    ports:
+      - 5432:5432
+    environment:
+      # Set user/password for Postgres
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db
+      # Set a path where Postgres should store the data
+      PGDATA: /var/lib/postgresql/data/pgdata
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: 'redis:alpine'
+    command: redis-server --requirepass alex_rocks
+    expose:
+      - '6379'
+    volumes:
+      - redis:/data
+    ports:
+      - '6379:6379'
+
+volumes:
+  pgdata:
+  redis:

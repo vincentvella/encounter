@@ -1,0 +1,27 @@
+FROM node:14 AS builder
+
+# Create app directory
+WORKDIR /usr/src/account
+
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+COPY package.json ./
+COPY yarn.lock ./
+COPY prisma ./prisma/
+
+# Install usr/src/account dependencies
+RUN yarn
+
+COPY . .
+
+RUN yarn build
+
+FROM node:14
+
+COPY --from=builder /usr/src/account/node_modules ./node_modules
+COPY --from=builder /usr/src/account/package.json ./
+COPY --from=builder /usr/src/account/yarn.lock ./
+COPY --from=builder /usr/src/account/dist ./dist
+
+EXPOSE 3000
+
+CMD [ "yarn", "start:prod" ]
