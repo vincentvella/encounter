@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { AccountDTO } from './account.dto';
+import { AccountDTO } from './dto/account.dto';
 import { AccountService } from './account.service';
 import { AccountController } from './account.controller'
 import { v4 as uuidv4 } from 'uuid';
