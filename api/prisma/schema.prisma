@@ -10,16 +10,40 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Account {
-  id       String   @id @default(uuid())
-  username String   @unique
-  password String
-  // Signifies one or zero profiles for accounts
-  Profile  Profile?
+model User {
+  id          String   @id @unique @default(uuid())
+  // Possible Profile Attributes
+  phoneNumber String?  @unique
+  fbUserId    String?  @unique
+  // Relationships
+  profile     Profile? // Signifies one or zero profiles for accounts
 }
 
 model Profile {
-  id        String  @id @default(uuid())
-  account   Account @relation(fields: [accountId], references: [id])
-  accountId String
+  id        String @id @unique @default(uuid())
+  // Relationships
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String @unique
+  // Attributes
+  email     String
+  firstName String
+  lastName  String
+  age       String
+}
+
+model SearchCriteria {
+  id           Int       @id @unique @default(autoincrement())
+  // Attributes
+  searchRadius Float
+  // Relationships
+  location     Location?
+  // location.latitude | location.longitude
+}
+
+model Location {
+  id               Int            @id @unique @default(autoincrement())
+  latitude         Float
+  longitude        Float
+  searchCriteria   SearchCriteria @relation(fields: [searchCriteriaId], references: [id])
+  searchCriteriaId Int            @unique
 }
