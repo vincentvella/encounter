@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { Camera } from 'expo-camera';
-import { Audio } from 'expo-av';
 import Navigator from './services/navigation/navigator';
 
 export default function App() {
@@ -12,8 +11,8 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      const { status: cameraStatus } = await Camera.requestPermissionsAsync()
-      const { status: audioStatus } = await Audio.requestPermissionsAsync();
+      const { status: cameraStatus } = await Camera.requestCameraPermissionsAsync()
+      const { status: audioStatus } = await Camera.requestMicrophonePermissionsAsync();
       setCameraEnabled(cameraStatus === 'granted')
       setMicrophoneEnabled(audioStatus === 'granted')
     })();

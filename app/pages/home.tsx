@@ -7,19 +7,18 @@ import ConnectionForm from '../components/connection-form';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'grey',
     alignItems: 'center',
     justifyContent: 'center'
   },
 })
 
 const Home = () => {
-  const { dark } = useTheme()
+  const { colors } = useTheme()
   return (
     <ScrollView
       contentContainerStyle={[
         styles.container,
-        { backgroundColor: dark ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.5)' }
+        { backgroundColor: colors.background }
       ]}
     >
       <ConnectionForm />

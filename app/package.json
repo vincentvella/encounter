@@ -12,7 +12,6 @@
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.0.7",
     "expo": "^43.0.0",
-    "expo-av": "~10.1.2",
     "expo-camera": "~12.0.3",
     "expo-permissions": "~13.0.3",
     "expo-splash-screen": "~0.13.4",
@@ -33,7 +32,8 @@
     "@babel/core": "^7.12.9",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
-    "typescript": "~4.3.5"
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
   },
   "private": true,
   "name": "encounter",
