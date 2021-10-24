@@ -1,9 +1,9 @@
-import { useTheme } from '@react-navigation/native';
 import * as React from 'react'
-import { Alert, StyleSheet, TextInput, TextStyle, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, TextStyle, TouchableOpacity } from 'react-native';
 import { Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import token from '../services/token';
+import { useTheme } from '../services/theme';
 
 const styles = StyleSheet.create({
   container: {
