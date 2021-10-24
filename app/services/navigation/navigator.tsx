@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack'
+import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useColorScheme } from 'react-native';
 import Home from '../../pages/home';
 import Call from '../../pages/call';
 import Landing from '../../pages/landing';
 import ColorTheme from '../theme/color';
+import Phone from '../../pages/sign-in/phone';
+import { StackParams } from './types';
 
 const useUser = () => {
   return false
 }
 
-const Stack = createStackNavigator()
+const Stack = createNativeStackNavigator<StackParams>()
 
 export default function Navigator() {
   const scheme = useColorScheme();
@@ -24,8 +26,9 @@ export default function Navigator() {
           <Stack.Screen name="Call" component={Call} />
         </Stack.Navigator>
         :
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Landing" component={Landing}></Stack.Screen>
+        <Stack.Navigator>
+          <Stack.Screen options={{ headerShown: false }} name="Landing" component={Landing} />
+          <Stack.Screen name="sign-in/phone" component={Phone} options={{ title: "Enter Phone Number" }} />
         </Stack.Navigator>
       }
     </NavigationContainer>
