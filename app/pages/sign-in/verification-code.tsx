@@ -1,10 +1,8 @@
-import { useNavigation } from '@react-navigation/core';
 import * as React from 'react'
 import { StyleSheet } from 'react-native';
 import { View } from 'react-native';
 import PrimaryButton from '../../components/button/primary';
 import { Input } from '../../components/inputs/input';
-import { RootNavigationProp } from '../../services/navigation/types';
 import { useTheme } from '../../services/theme';
 
 const styles = StyleSheet.create({
@@ -19,24 +17,22 @@ const styles = StyleSheet.create({
   }
 })
 
-const Phone = () => {
+const VerificationCode = () => {
   const { colors } = useTheme()
-  const navigation = useNavigation<RootNavigationProp>()
   const phoneNumberRef = React.useRef<Input>(null)
   const onSubmit = React.useCallback(() => {
-    navigation.navigate('sign-in/verification-code')
     // console.log(phoneNumberRef?.current?.getValue())
   }, [])
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.innerContainer}>
         <View style={styles.inputContainer}>
-          <Input ref={phoneNumberRef} name="Phone Number" />
+          <Input ref={phoneNumberRef} name="Verify Code" />
         </View>
-        <PrimaryButton onPress={onSubmit} color={colors.primary} title="Verify Phone" />
+        <PrimaryButton onPress={onSubmit} color={colors.primary} title="Verify Code" />
       </View>
     </View>
   );
 }
 
-export default Phone
+export default VerificationCode

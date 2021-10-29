@@ -1,0 +1,36 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: String!
+  fbUserId: String
+  phoneNumber: String
+}
+
+type CheckResponse {
+  request_id: String!
+  event_id: String!
+  status: String!
+  price: String!
+  currency: String!
+}
+
+type RequestResponse {
+  request_id: String!
+  status: String!
+}
+
+type Query {
+  requestCode(number: String!): RequestResponse
+  verifyCode(code: String!, request_id: String!): CheckResponse
+}
+
+type Mutation {
+  createUser(data: CreateUserDTO!): User!
+}
+
+input CreateUserDTO {
+  phoneNumber: String
+  fbUserId: String
+}

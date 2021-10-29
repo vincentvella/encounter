@@ -27,7 +27,8 @@
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.8.0",
     "react-native-twilio-video-webrtc": "https://github.com/blackuy/react-native-twilio-video-webrtc",
-    "react-native-web": "0.17.1"
+    "react-native-web": "0.17.1",
+    "react-query": "^3.28.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

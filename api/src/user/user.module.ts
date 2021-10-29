@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { VerificationService } from '../verification/verification.service';
-import { UserController } from './user.controller';
+import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
 
 @Module({
-  providers: [UserService, VerificationService],
-  controllers: [UserController],
+  providers: [UserService, VerificationService, UserResolver],
+  controllers: [],
 })
 export class UserModule { }
