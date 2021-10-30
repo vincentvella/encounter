@@ -4,9 +4,8 @@ import { ActivityIndicator, Platform } from 'react-native';
 import { useState } from 'react';
 import { Camera } from 'expo-camera';
 import Navigator from './services/navigation/navigator';
-import { QueryClientProvider } from 'react-query';
-import queryClient from './services/client';
-import DevTools from './services/client/devtools.native';
+import client from './services/client';
+import { ApolloProvider } from '@apollo/client';
 
 export default function App() {
   const [cameraEnabled, setCameraEnabled] = useState<boolean | undefined>(undefined)
@@ -26,11 +25,10 @@ export default function App() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {Platform.OS === 'web' && <DevTools initialIsOpen={true} />}
+    <ApolloProvider client={client}>
       <StatusBar style="auto" />
       <Navigator />
-    </QueryClientProvider>
+    </ApolloProvider>
   );
 }
 

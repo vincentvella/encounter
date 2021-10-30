@@ -1,5 +1,8 @@
-import { QueryClient } from 'react-query'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
 
-const queryClient = new QueryClient()
+const client = new ApolloClient({
+  uri: 'https://encounter-dev.loca.lt/graphql',
+  cache: new InMemoryCache()
+});
 
-export default queryClient
+export default client
