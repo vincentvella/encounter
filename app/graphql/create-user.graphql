@@ -1,0 +1,7 @@
+mutation CreateUser($phoneNumber: String!) {
+   createUser(data: {phoneNumber: $phoneNumber}) {
+    id
+    fbUserId
+    phoneNumber
+  }
+}

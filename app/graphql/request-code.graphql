@@ -1,0 +1,6 @@
+query RequestCode($number: String!) {
+  requestCode(number: $number) {
+    requestId: request_id
+    status
+  }
+}
