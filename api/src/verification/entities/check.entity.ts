@@ -18,5 +18,5 @@ export class CheckResponse {
   currency: string;
 
   @Field((type) => String, { nullable: true })
-  authToken: string;
+  access_token: string;
 }

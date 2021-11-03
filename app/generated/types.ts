@@ -16,7 +16,7 @@ export type Scalars = {
 
 export type CheckResponse = {
   __typename?: 'CheckResponse';
-  authToken?: Maybe<Scalars['String']>;
+  access_token?: Maybe<Scalars['String']>;
   currency: Scalars['String'];
   event_id: Scalars['String'];
   price: Scalars['String'];
@@ -95,7 +95,7 @@ export type VerifyCodeQueryVariables = Exact<{
 }>;
 
 
-export type VerifyCodeQuery = { __typename?: 'Query', verifyCode?: { __typename?: 'CheckResponse', authToken?: string | null | undefined, status: string, requestId: string, eventId: string } | null | undefined };
+export type VerifyCodeQuery = { __typename?: 'Query', verifyCode?: { __typename?: 'CheckResponse', status: string, requestId: string, eventId: string, accessToken?: string | null | undefined } | null | undefined };
 
 
 export const CreateUserDocument = gql`
@@ -174,7 +174,7 @@ export const VerifyCodeDocument = gql`
   verifyCode(code: $code, request_id: $requestId) {
     requestId: request_id
     eventId: event_id
-    authToken
+    accessToken: access_token
     status
   }
 }

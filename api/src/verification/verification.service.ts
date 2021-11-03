@@ -24,7 +24,7 @@ export class VerificationService {
     })
   })
 
-  check = (req: { request_id: string, code: string }) => new Promise<Omit<CheckResponse, 'authToken'> | null>((resolve) => {
+  check = (req: { request_id: string, code: string }) => new Promise<Omit<CheckResponse, 'access_token'> | null>((resolve) => {
     this.provider.verify.check(req, (err, result) => {
       if (err) {
         console.error(err)

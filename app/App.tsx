@@ -6,6 +6,7 @@ import { Camera } from 'expo-camera';
 import Navigator from './services/navigation/navigator';
 import client from './services/client';
 import { ApolloProvider } from '@apollo/client';
+import { RecoilRoot } from 'recoil';
 
 export default function App() {
   const [cameraEnabled, setCameraEnabled] = useState<boolean | undefined>(undefined)
@@ -27,7 +28,9 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <StatusBar style="auto" />
-      <Navigator />
+      <RecoilRoot>
+        <Navigator />
+      </RecoilRoot>
     </ApolloProvider>
   );
 }

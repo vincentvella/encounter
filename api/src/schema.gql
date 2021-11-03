@@ -14,7 +14,7 @@ type CheckResponse {
   status: String!
   price: String!
   currency: String!
-  authToken: String
+  access_token: String
 }
 
 type RequestResponse {

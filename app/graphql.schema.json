@@ -24,7 +24,7 @@
         "description": null,
         "fields": [
           {
-            "name": "authToken",
+            "name": "access_token",
             "description": null,
             "args": [],
             "type": {

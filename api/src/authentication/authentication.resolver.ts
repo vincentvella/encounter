@@ -3,6 +3,7 @@ import { Args, Query, Resolver } from "@nestjs/graphql";
 import { Cache } from "cache-manager";
 import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
+import { TokenResponse } from "src/verification/entities/authToken.entity";
 import { CheckResponse } from "src/verification/entities/check.entity";
 import { RequestResponse } from "src/verification/entities/request.entity";
 import { VerificationService } from "src/verification/verification.service";
@@ -25,14 +26,6 @@ export class AuthenticationResolver {
       const verificationRequest = await this.verificationService.request({ number, brand: 'Encounter' })
       await this.cacheManager.set(verificationRequest.request_id, number, { ttl: 3600 })
       return verificationRequest
-    } catch (err) {
-      return null
-    }
-  }
-
-  private async authenticateUser(user: User) {
-    try {
-      return this.authenticationService.login(user)
     } catch (err) {
       return null
     }
@@ -64,8 +57,8 @@ export class AuthenticationResolver {
         if (phoneNumber) {
           // Once we've verified the phone number we can create a user
           const user = await this.returnOrCreateUser(phoneNumber)
-          const accessToken = this.authenticateUser(user)
-          return { ...checkResponse, accessToken }
+          const { access_token } = await this.authenticationService.login(user)
+          return { ...checkResponse, access_token }
         }
       }
     } catch (err) {
