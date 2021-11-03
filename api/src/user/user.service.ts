@@ -10,4 +10,8 @@ export class UserService {
   async insertOne(data: CreateUserDTO): Promise<User> {
     return this.prisma.user.create({ data })
   }
+
+  async findByNumber(phoneNumber: string) {
+    return this.prisma.user.findUnique({ where: { phoneNumber } })
+  }
 }

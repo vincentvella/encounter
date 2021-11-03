@@ -9,6 +9,7 @@ import ColorTheme from '../theme/color';
 import Phone from '../../pages/sign-in/phone';
 import { StackParams } from './types';
 import VerificationCode from '../../pages/sign-in/verification-code';
+import Profile from '../../pages/sign-up/profile';
 
 const useUser = () => {
   return false
@@ -31,6 +32,7 @@ export default function Navigator() {
           <Stack.Screen options={{ headerShown: false }} name="Landing" component={Landing} />
           <Stack.Screen name="sign-in/phone" component={Phone} options={{ title: "Enter Phone Number" }} />
           <Stack.Screen name="sign-in/verification-code" component={VerificationCode} options={{ title: "Verify Code" }} />
+          <Stack.Screen name="sign-up/profile" component={Profile} options={{ title: "Profile" }} />
         </Stack.Navigator>
       }
     </NavigationContainer>

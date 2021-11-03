@@ -12,7 +12,8 @@ export class VerificationService {
   })
 
   request = async (req: { number: string, brand: string }) => new Promise<RequestResponse | null>((resolve) => {
-    this.provider.verify.request(req, (err, result) => {
+    console.log('... huh')
+    this.provider.verify.request({ ...req, pin_expiry: 3600, workflow_id: 6 }, (err, result) => {
       if (err) {
         console.error(err);
         throw new Error('Error sending request for phone verification')
@@ -23,7 +24,7 @@ export class VerificationService {
     })
   })
 
-  check = (req: { request_id: string, code: string }) => new Promise<CheckResponse | null>((resolve) => {
+  check = (req: { request_id: string, code: string }) => new Promise<Omit<CheckResponse, 'authToken'> | null>((resolve) => {
     this.provider.verify.check(req, (err, result) => {
       if (err) {
         console.error(err)

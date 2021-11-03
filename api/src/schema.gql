@@ -14,6 +14,7 @@ type CheckResponse {
   status: String!
   price: String!
   currency: String!
+  authToken: String
 }
 
 type RequestResponse {
@@ -22,6 +23,7 @@ type RequestResponse {
 }
 
 type Query {
+  findUser(number: String!): User
   requestCode(number: String!): RequestResponse
   verifyCode(code: String!, request_id: String!): CheckResponse
 }

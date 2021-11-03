@@ -44,6 +44,9 @@ PODS:
     - React-jsi (= 0.64.2)
     - ReactCommon/turbomodule/core (= 0.64.2)
   - glog (0.3.5)
+  - MMKV (1.2.10):
+    - MMKVCore (~> 1.2.10)
+  - MMKVCore (1.2.11)
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
     - DoubleConversion
@@ -237,6 +240,9 @@ PODS:
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
   - React-jsinspector (0.64.2)
+  - react-native-mmkv-storage (0.6.6):
+    - MMKV (= 1.2.10)
+    - React-Core
   - react-native-safe-area-context (3.3.2):
     - React-Core
   - react-native-twilio-video-webrtc (2.0.0):
@@ -379,6 +385,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-mmkv-storage (from `../node_modules/react-native-mmkv-storage`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-twilio-video-webrtc (from `../node_modules/react-native-twilio-video-webrtc`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -402,6 +409,8 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - boost-for-react-native
+    - MMKV
+    - MMKVCore
     - TwilioVideo
 
 EXTERNAL SOURCES:
@@ -467,6 +476,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-mmkv-storage:
+    :path: "../node_modules/react-native-mmkv-storage"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-twilio-video-webrtc:
@@ -528,6 +539,8 @@ SPEC CHECKSUMS:
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
   FBReactNativeSpec: 1c7c4eba9970a387e3e123f4bd2fbd53aa0d7563
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
+  MMKV: 76033b9ace2006623308910a3afcc0e25eba3140
+  MMKVCore: f9e4f56742fdebbd042f7a273e278927f182cee7
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 6d3e854f0e7260a648badd0d44fc364bc9da9728
   RCTTypeSafety: c1f31d19349c6b53085766359caac425926fafaa
@@ -539,6 +552,7 @@ SPEC CHECKSUMS:
   React-jsi: 67747b9722f6dab2ffe15b011bcf6b3f2c3f1427
   React-jsiexecutor: 80c46bd381fd06e418e0d4f53672dc1d1945c4c3
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
+  react-native-mmkv-storage: 28514ffe9e67c5223b3d00e725bc72c8194a9eee
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-twilio-video-webrtc: 5b40ee0129687cb89fb5055680aed35c8db4be07
   React-perflogger: 25373e382fed75ce768a443822f07098a15ab737

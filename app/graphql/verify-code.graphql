@@ -2,6 +2,7 @@ query VerifyCode($code: String!, $requestId: String!) {
   verifyCode(code: $code, request_id: $requestId) {
     requestId: request_id
     eventId: event_id
+    authToken
     status
   }
 }

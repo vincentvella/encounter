@@ -1,3 +1,4 @@
+import { RouteProp } from "@react-navigation/core";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 type AuthenticatedStackParams = {
@@ -8,7 +9,8 @@ type AuthenticatedStackParams = {
 type UnauthenticatedStackParams = {
   Landing: undefined
   'sign-in/phone': undefined
-  'sign-in/verification-code': { requestId: string }
+  'sign-in/verification-code': { requestId: string, number: string }
+  'sign-up/profile': undefined
 }
 
 export type StackParams = AuthenticatedStackParams & UnauthenticatedStackParams
@@ -24,4 +26,4 @@ export type AuthenticatedRootNavigationProp = RootNavigationProps<true>['navigat
 export type RootNavigationProp = RootNavigationProps<false>['navigation'];
 // navigation.route
 export type AuthenticatedRootRouteProp = RootNavigationProps<true>['route'];
-export type RootRouteProp = RootNavigationProps<false>['route'];
+export type RootRouteProp<R extends keyof UnauthenticatedStackParams> = RouteProp<UnauthenticatedStackParams, R>

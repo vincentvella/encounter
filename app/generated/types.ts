@@ -16,6 +16,7 @@ export type Scalars = {
 
 export type CheckResponse = {
   __typename?: 'CheckResponse';
+  authToken?: Maybe<Scalars['String']>;
   currency: Scalars['String'];
   event_id: Scalars['String'];
   price: Scalars['String'];
@@ -40,8 +41,14 @@ export type MutationCreateUserArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  findUser?: Maybe<User>;
   requestCode?: Maybe<RequestResponse>;
   verifyCode?: Maybe<CheckResponse>;
+};
+
+
+export type QueryFindUserArgs = {
+  number: Scalars['String'];
 };
 
 
@@ -88,7 +95,7 @@ export type VerifyCodeQueryVariables = Exact<{
 }>;
 
 
-export type VerifyCodeQuery = { __typename?: 'Query', verifyCode?: { __typename?: 'CheckResponse', status: string, requestId: string, eventId: string } | null | undefined };
+export type VerifyCodeQuery = { __typename?: 'Query', verifyCode?: { __typename?: 'CheckResponse', authToken?: string | null | undefined, status: string, requestId: string, eventId: string } | null | undefined };
 
 
 export const CreateUserDocument = gql`
@@ -167,6 +174,7 @@ export const VerifyCodeDocument = gql`
   verifyCode(code: $code, request_id: $requestId) {
     requestId: request_id
     eventId: event_id
+    authToken
     status
   }
 }

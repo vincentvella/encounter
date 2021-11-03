@@ -20,37 +20,26 @@ const styles = StyleSheet.create({
   }
 })
 
-const Phone = () => {
+const Profile = () => {
   const { colors } = useTheme()
   const navigation = useNavigation<RootNavigationProp>()
-  const phoneNumberRef = React.useRef<Input>(null)
-  const [requestCode, { loading, error }] = useRequestCodeLazyQuery({
-    onCompleted: (data) => {
-      if (data.requestCode?.requestId && phoneNumberRef?.current?.getValue) {
-        navigation.navigate('sign-in/verification-code', {
-          requestId: data.requestCode.requestId,
-          number: phoneNumberRef.current.getValue()
-        })
-      }
-    }
-  })
+  // const phoneNumberRef = React.useRef<Input>(null)
+  // const {} = useProfile
 
-  console.log({ error })
-  const onSubmit = React.useCallback(() => {
-    if (phoneNumberRef?.current?.getValue) {
-      requestCode({ variables: { number: phoneNumberRef.current.getValue() } })
-    }
-  }, [])
+  // const onSubmit = React.useCallback(() => {
+  //   if (phoneNumberRef?.current?.getValue) {
+  //   }
+  // }, [])
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.innerContainer}>
         <View style={styles.inputContainer}>
-          <Input ref={phoneNumberRef} name="Phone Number" />
+          {/* <Input ref={phoneNumberRef} name="Phone Number" /> */}
         </View>
-        <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Verify Phone" />
+        {/* <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Verify Phone" /> */}
       </View>
     </View>
   );
 }
 
-export default Phone
+export default Profile

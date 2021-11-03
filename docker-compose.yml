@@ -19,7 +19,7 @@ services:
 
   redis:
     image: 'redis:alpine'
-    command: redis-server --requirepass alex_rocks
+    command: redis-server
     expose:
       - '6379'
     volumes:

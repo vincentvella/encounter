@@ -12,6 +12,7 @@ import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.encounter.app.CustomMMKVJSIModulePackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
@@ -21,6 +22,7 @@ import com.swmansion.reanimated.ReanimatedJSIModulePackage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -48,8 +50,8 @@ public class MainApplication extends Application implements ReactApplication {
     }
 
     @Override
-    protected JSIModulePackage getJSIModulePackage() {
-      return new ReanimatedJSIModulePackage();
+    protected JSIModulePackage getJSIModulePackage() {   
+      return new CustomMMKVJSIModulePackage();   
     }
   });
 
