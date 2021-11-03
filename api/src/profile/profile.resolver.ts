@@ -4,6 +4,8 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Profile } from './entities/profile.entity';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RemoveProfile } from './entities/remove-profile.entity';
+import { CurrentUser } from 'src/user/user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @Resolver(of => Profile)
 export class ProfileResolver {
@@ -20,8 +22,8 @@ export class ProfileResolver {
   }
 
   @Query((returns) => Profile, { nullable: true })
-  findProfile(@Args('id') id: string) {
-    return this.profileService.findOne(+id);
+  findProfile(@CurrentUser() user: User) {
+    return this.profileService.findOne(+user.id);
   }
 
   @Mutation((returns) => Profile)

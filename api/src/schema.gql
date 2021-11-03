@@ -39,7 +39,7 @@ type Query {
   requestCode(number: String!): RequestResponse
   verifyCode(code: String!, request_id: String!): CheckResponse
   findAllProfiles: [Profile!]!
-  findProfile(id: String!): Profile
+  findProfile: Profile
 }
 
 type Mutation {
