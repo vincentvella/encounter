@@ -22,17 +22,46 @@ type RequestResponse {
   status: String!
 }
 
+type Profile {
+  id: String!
+  userId: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+}
+
+type RemoveProfile {
+  status: String!
+}
+
 type Query {
   findUser(number: String!): User
   requestCode(number: String!): RequestResponse
   verifyCode(code: String!, request_id: String!): CheckResponse
+  findAllProfiles: [Profile!]!
+  findProfile(id: String!): Profile
 }
 
 type Mutation {
   createUser(data: CreateUserDTO!): User!
+  createProfile(data: CreateProfileDto!): Profile!
+  updateProfile(profile: UpdateProfileDto!, id: String!): Profile!
+  removeProfile(id: String!): RemoveProfile!
 }
 
 input CreateUserDTO {
   phoneNumber: String
   fbUserId: String
+}
+
+input CreateProfileDto {
+  email: String!
+  firstName: String!
+  lastName: String!
+}
+
+input UpdateProfileDto {
+  email: String!
+  firstName: String!
+  lastName: String!
 }

@@ -29,7 +29,6 @@ model Profile {
   email          String
   firstName      String
   lastName       String
-  age            String
 }
 
 model SearchCriteria {

@@ -7,8 +7,7 @@ import { VerificationService } from '../verification/verification.service';
 import { AuthenticationResolver } from './authentication.resolver';
 import { AuthenticationService } from './authentication.service';
 import { jwtConstants } from './constants';
-import { JwtStrategy } from './jwt.strategy';
-import { LocalStrategy } from './local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -16,7 +15,7 @@ import { LocalStrategy } from './local.strategy';
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '30d' },
     }),
   ],
   providers: [
@@ -24,7 +23,6 @@ import { LocalStrategy } from './local.strategy';
     UserService,
     AuthenticationService,
     AuthenticationResolver,
-    LocalStrategy,
     JwtStrategy,
   ],
   controllers: [],

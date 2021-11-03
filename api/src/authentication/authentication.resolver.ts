@@ -1,14 +1,12 @@
 import { CACHE_MANAGER, Inject } from "@nestjs/common";
 import { Args, Query, Resolver } from "@nestjs/graphql";
 import { Cache } from "cache-manager";
-import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
-import { TokenResponse } from "src/verification/entities/authToken.entity";
 import { CheckResponse } from "src/verification/entities/check.entity";
 import { RequestResponse } from "src/verification/entities/request.entity";
 import { VerificationService } from "src/verification/verification.service";
 import { AuthenticationService } from "./authentication.service";
-import { Public } from "./public.strategy";
+import { Public } from "./strategies/public.strategy";
 
 @Resolver(of => RequestResponse)
 export class AuthenticationResolver {

@@ -7,12 +7,11 @@ import { ProfileModule } from './profile/profile.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './authentication/jwt-auth.guard';
+import { JwtAuthGuard } from './authentication/guards/jwt-auth.guard';
 
 @Module({
   imports: [
     GraphQLModule.forRoot({
-      // installSubscriptionHandlers: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     CacheModule.register({
