@@ -23,7 +23,7 @@ export class ProfileResolver {
 
   @Query((returns) => Profile, { nullable: true })
   findProfile(@CurrentUser() user: User) {
-    return this.profileService.findOne(+user.id);
+    return this.profileService.findOne(user.id);
   }
 
   @Mutation((returns) => Profile)

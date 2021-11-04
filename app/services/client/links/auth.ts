@@ -5,8 +5,10 @@ import { setContext } from "@apollo/client/link/context";
 const auth = setContext(async (_, { headers }) => {
   const token = Cookie.get('jwt')
   return {
-    ...headers,
-    authorization: token ? `Bearer ${token}` : null,
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : null,
+    }
   }
 })
 

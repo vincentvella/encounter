@@ -1,7 +1,9 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
+import { ExtractJwt } from 'passport-jwt';
+import { jwtConstants } from '../constants';
 import { IS_PUBLIC_KEY } from '../strategies/public.strategy';
 
 @Injectable()
@@ -12,8 +14,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
-    console.log(ctx.getContext().reqontext)
-
     return ctx.getContext().req;
   }
 
@@ -22,10 +22,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getHandler(),
       context.getClass(),
     ]);
-    console.log({ isPublic })
+
     if (isPublic) {
       return true;
     }
+
     return super.canActivate(context);
   }
 }

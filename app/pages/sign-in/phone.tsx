@@ -25,6 +25,7 @@ const Phone = () => {
   const navigation = useNavigation<RootNavigationProp>()
   const phoneNumberRef = React.useRef<Input>(null)
   const [requestCode, { loading, error }] = useRequestCodeLazyQuery({
+    fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       if (data.requestCode?.requestId && phoneNumberRef?.current?.getValue) {
         navigation.navigate('sign-in/verification-code', {

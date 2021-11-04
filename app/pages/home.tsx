@@ -2,8 +2,11 @@ import { useNavigation } from '@react-navigation/core';
 import * as React from 'react'
 import { StyleSheet } from 'react-native';
 import { View } from 'react-native';
-import { RootNavigationProp } from '../services/navigation/types';
+import { useSetRecoilState } from 'recoil';
+import { useProfileQuery } from '../generated/types';
+import { AuthenticatedRootNavigationProp, RootNavigationProp } from '../services/navigation/types';
 import { useTheme } from '../services/theme';
+import { isOnboarding, isSignedIn } from '../states/authentication';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,8 +22,23 @@ const styles = StyleSheet.create({
 
 const Home = () => {
   const { colors } = useTheme()
-  // const {} = usePro
-  const navigation = useNavigation<RootNavigationProp>()
+  const setIsSignedIn = useSetRecoilState(isSignedIn)
+  const setIsOnboarding = useSetRecoilState(isOnboarding)
+
+  const navigation = useNavigation<AuthenticatedRootNavigationProp>()
+  const { error } = useProfileQuery({
+    onCompleted: (data) => {
+      if (data?.findProfile === null) {
+        setIsOnboarding(true)
+      }
+    }
+  })
+  React.useEffect(() => {
+    if (error && error.message.includes('Unauthorized')) {
+      setIsSignedIn(false)
+    }
+  }, [error])
+
   // const phoneNumberRef = React.useRef<Input>(null)
   // const {} = useProfile
 

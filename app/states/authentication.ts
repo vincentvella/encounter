@@ -5,3 +5,8 @@ export const isSignedIn = atom({
   key: 'isSignedIn',
   default: !!Cookies.get('jwt'), // default value (aka initial value)
 });
+
+export const isOnboarding = atom({
+  key: 'isOnboarding',
+  default: false,
+});

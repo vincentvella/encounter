@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from '@react-navigation/core';
+import { useRoute } from '@react-navigation/core';
 import * as React from 'react'
 import { StyleSheet } from 'react-native';
 import { View } from 'react-native';
@@ -6,8 +6,7 @@ import { useSetRecoilState } from 'recoil';
 import PrimaryButton from '../../components/button/primary';
 import { Input } from '../../components/inputs/input';
 import { useVerifyCodeLazyQuery } from '../../generated/types';
-import { RootNavigationProp, RootRouteProp } from '../../services/navigation/types';
-import { Storage } from '../../services/storage';
+import { RootRouteProp } from '../../services/navigation/types';
 import Cookie from '../../services/storage/cookie';
 import { useTheme } from '../../services/theme';
 import { isSignedIn } from '../../states/authentication';
@@ -31,6 +30,7 @@ const VerificationCode = () => {
   const setIsSignedIn = useSetRecoilState(isSignedIn)
 
   const [verifyCode, { loading }] = useVerifyCodeLazyQuery({
+    fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       if (data.verifyCode?.accessToken) {
         Cookie.set('jwt', data.verifyCode.accessToken)
