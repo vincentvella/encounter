@@ -2,8 +2,6 @@ import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/com
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
-import { ExtractJwt } from 'passport-jwt';
-import { jwtConstants } from '../constants';
 import { IS_PUBLIC_KEY } from '../strategies/public.strategy';
 
 @Injectable()

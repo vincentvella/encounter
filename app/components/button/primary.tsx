@@ -24,6 +24,7 @@ type ButtonProps = {
 
 const PrimaryButton: React.FC<ButtonProps> = ({ title, textColor: color = 'white', color: backgroundColor, onPress = () => { }, loading = false }) => (
   <Pressable
+    disabled={loading}
     onPress={onPress}
     style={({ pressed }) => [styles.button, { backgroundColor, opacity: pressed ? 0.9 : undefined }]}
   >

@@ -10,6 +10,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Role {
+  ADMIN
+  USER 
+}
+
 model User {
   id          String   @id @unique @default(uuid())
   // Possible Profile Attributes
@@ -17,6 +22,7 @@ model User {
   fbUserId    String?  @unique
   // Relationships
   profile     Profile? // Signifies one or zero profiles for accounts
+  role        Role     @default(USER)
 }
 
 model Profile {

@@ -1,5 +1,9 @@
 query Profile {
   findProfile {
     id
+    userId
+    email
+    firstName
+    lastName
   }
 }

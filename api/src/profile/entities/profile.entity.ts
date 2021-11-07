@@ -12,7 +12,6 @@ export class Profile implements ProfileType {
   @Field()
   email: string
 
-
   @Field()
   firstName: string
 

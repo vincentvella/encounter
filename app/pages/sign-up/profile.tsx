@@ -1,12 +1,14 @@
-import { useNavigation } from '@react-navigation/core';
 import * as React from 'react'
 import { StyleSheet } from 'react-native';
 import { View } from 'react-native';
+import { useSetRecoilState } from 'recoil';
 import PrimaryButton from '../../components/button/primary';
 import { Input } from '../../components/inputs/input';
-import { useRequestCodeLazyQuery, useRequestCodeQuery } from '../../generated/types';
-import { RootNavigationProp } from '../../services/navigation/types';
+import { useCreateProfileMutation } from '../../generated/types';
+// import { useNavigation } from '@react-navigation/core';
+// import { AuthenticatedRootNavigationProp } from '../../services/navigation/types';
 import { useTheme } from '../../services/theme';
+import { isOnboarding } from '../../states/authentication';
 
 const styles = StyleSheet.create({
   container: {
@@ -22,21 +24,43 @@ const styles = StyleSheet.create({
 
 const Profile = () => {
   const { colors } = useTheme()
-  const navigation = useNavigation<RootNavigationProp>()
-  // const phoneNumberRef = React.useRef<Input>(null)
-  // const {} = useProfile
+  // const navigation = useNavigation<AuthenticatedRootNavigationProp>()
+  const emailRef = React.useRef<Input>(null)
+  const firstNameRef = React.useRef<Input>(null)
+  const lastNameRef = React.useRef<Input>(null)
+  const setIsOnboarding = useSetRecoilState(isOnboarding)
 
-  // const onSubmit = React.useCallback(() => {
-  //   if (phoneNumberRef?.current?.getValue) {
-  //   }
-  // }, [])
+  const [createProfile, { loading, data }] = useCreateProfileMutation()
+
+  const onSubmit = React.useCallback(() => {
+    createProfile({
+      variables: {
+        data: {
+          email: emailRef.current?.getValue() || '',
+          firstName: firstNameRef.current?.getValue() || '',
+          lastName: lastNameRef.current?.getValue() || '',
+        }
+      }
+    })
+  }, [])
+
+  React.useEffect(() => {
+    if (data?.createProfile?.id) {
+      setIsOnboarding(false)
+      // Eventually to support search criteria
+      // navigation.navigate('home')
+    }
+  }, [data])
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.innerContainer}>
         <View style={styles.inputContainer}>
-          {/* <Input ref={phoneNumberRef} name="Phone Number" /> */}
+          <Input ref={emailRef} name="Email" />
+          <Input ref={firstNameRef} name="First Name" />
+          <Input ref={lastNameRef} name="Last Name" />
         </View>
-        {/* <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Verify Phone" /> */}
+        <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Verify Phone" />
       </View>
     </View>
   );

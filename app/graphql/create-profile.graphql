@@ -1,0 +1,9 @@
+mutation CreateProfile($data: CreateProfileDto!) {
+   createProfile(data: $data) {
+    id
+    userId
+    email
+    firstName
+    lastName
+  }
+}

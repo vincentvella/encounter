@@ -122,6 +122,13 @@ export type User = {
   phoneNumber?: Maybe<Scalars['String']>;
 };
 
+export type CreateProfileMutationVariables = Exact<{
+  data: CreateProfileDto;
+}>;
+
+
+export type CreateProfileMutation = { __typename?: 'Mutation', createProfile: { __typename?: 'Profile', id: string, userId: string, email: string, firstName: string, lastName: string } };
+
 export type CreateUserMutationVariables = Exact<{
   phoneNumber: Scalars['String'];
 }>;
@@ -132,7 +139,7 @@ export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __type
 export type ProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProfileQuery = { __typename?: 'Query', findProfile?: { __typename?: 'Profile', id: string } | null | undefined };
+export type ProfileQuery = { __typename?: 'Query', findProfile?: { __typename?: 'Profile', id: string, userId: string, email: string, firstName: string, lastName: string } | null | undefined };
 
 export type RequestCodeQueryVariables = Exact<{
   number: Scalars['String'];
@@ -150,6 +157,43 @@ export type VerifyCodeQueryVariables = Exact<{
 export type VerifyCodeQuery = { __typename?: 'Query', verifyCode?: { __typename?: 'CheckResponse', status: string, requestId: string, eventId: string, accessToken?: string | null | undefined } | null | undefined };
 
 
+export const CreateProfileDocument = gql`
+    mutation CreateProfile($data: CreateProfileDto!) {
+  createProfile(data: $data) {
+    id
+    userId
+    email
+    firstName
+    lastName
+  }
+}
+    `;
+export type CreateProfileMutationFn = Apollo.MutationFunction<CreateProfileMutation, CreateProfileMutationVariables>;
+
+/**
+ * __useCreateProfileMutation__
+ *
+ * To run a mutation, you first call `useCreateProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createProfileMutation, { data, loading, error }] = useCreateProfileMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateProfileMutation(baseOptions?: Apollo.MutationHookOptions<CreateProfileMutation, CreateProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateProfileMutation, CreateProfileMutationVariables>(CreateProfileDocument, options);
+      }
+export type CreateProfileMutationHookResult = ReturnType<typeof useCreateProfileMutation>;
+export type CreateProfileMutationResult = Apollo.MutationResult<CreateProfileMutation>;
+export type CreateProfileMutationOptions = Apollo.BaseMutationOptions<CreateProfileMutation, CreateProfileMutationVariables>;
 export const CreateUserDocument = gql`
     mutation CreateUser($phoneNumber: String!) {
   createUser(data: {phoneNumber: $phoneNumber}) {
@@ -189,6 +233,10 @@ export const ProfileDocument = gql`
     query Profile {
   findProfile {
     id
+    userId
+    email
+    firstName
+    lastName
   }
 }
     `;

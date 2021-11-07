@@ -45,6 +45,7 @@
     "@graphql-codegen/typescript-graphql-files-modules": "2.1.0",
     "@graphql-codegen/typescript-operations": "2.2.0",
     "@graphql-codegen/typescript-react-apollo": "3.2.0",
+    "@nestjs/cli": "^8.1.4",
     "@types/js-cookie": "^3.0.0",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",

@@ -16,7 +16,7 @@ export class AuthenticationService {
   }
 
   async login(user: User) {
-    const payload = { phoneNumber: user.phoneNumber, fbUserId: user.fbUserId, sub: user.id };
+    const payload = { phoneNumber: user.phoneNumber, fbUserId: user.fbUserId, sub: user.id, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),
     };

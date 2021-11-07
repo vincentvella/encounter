@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { jwtConstants } from '../constants';
 import { User } from 'src/user/entities/user.entity';
 
-export type JWTPayload = Pick<User, 'fbUserId' | 'phoneNumber'> & {
+export type JWTPayload = Pick<User, 'fbUserId' | 'phoneNumber' | 'role'> & {
   sub: string
 }
 
@@ -20,6 +20,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JWTPayload) {
-    return { phoneNumber: payload.phoneNumber, fbUserId: payload.fbUserId, id: payload.sub }
+    return { phoneNumber: payload.phoneNumber, fbUserId: payload.fbUserId, id: payload.sub, role: payload.role }
   }
 }

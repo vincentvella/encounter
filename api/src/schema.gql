@@ -6,6 +6,7 @@ type User {
   id: String!
   fbUserId: String
   phoneNumber: String
+  role: String!
 }
 
 type CheckResponse {

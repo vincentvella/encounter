@@ -1,7 +1,8 @@
+import { Profile } from ".prisma/client";
 import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
-export class CreateProfileDto {
+export class CreateProfileDto implements Omit<Profile, 'id' | 'userId'> {
   @Field()
   email: string
 

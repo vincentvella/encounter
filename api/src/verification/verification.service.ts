@@ -31,7 +31,6 @@ export class VerificationService {
         console.error(err);
         throw new Error('Error sending request for phone verification')
       } else {
-        console.log({ result })
         resolve(result)
       }
     })
@@ -61,7 +60,6 @@ export class VerificationService {
         console.error(result)
         resolve(null)
       } else {
-        console.log({ result })
         resolve(result)
       }
     })

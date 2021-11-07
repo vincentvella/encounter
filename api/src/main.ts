@@ -10,9 +10,6 @@ async function bootstrap() {
   const prismaService: PrismaService = app.get(PrismaService);
   prismaService.enableShutdownHooks(app)
 
-  // Set up validation pipes
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   await app.listen(3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }

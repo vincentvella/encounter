@@ -39,20 +39,9 @@ const Home = () => {
     }
   }, [error])
 
-  // const phoneNumberRef = React.useRef<Input>(null)
-  // const {} = useProfile
-
-  // const onSubmit = React.useCallback(() => {
-  //   if (phoneNumberRef?.current?.getValue) {
-  //   }
-  // }, [])
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.innerContainer}>
-        <View style={styles.inputContainer}>
-          {/* <Input ref={phoneNumberRef} name="Phone Number" /> */}
-        </View>
-        {/* <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Verify Phone" /> */}
       </View>
     </View>
   );

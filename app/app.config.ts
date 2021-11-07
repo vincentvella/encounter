@@ -20,7 +20,6 @@ const buildGradleMod: Mod<AndroidConfig.Paths.GradleProjectFile> = (config) => {
 
 const settingsGradleMod: Mod<AndroidConfig.Paths.GradleProjectFile> = (config) => {
   let data = config.modResults.contents.split("\n")
-  console.log(data)
   data = addAfterLine(data, 'applyNativeModulesSettingsGradle(settings)', "project(':react-native-twilio-video-webrtc').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-twilio-video-webrtc/android')")
   data = addAfterLine(data, "project(':react-native-twilio-video-webrtc').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-twilio-video-webrtc/android')", "include ':react-native-twilio-video-webrtc'")
   config.modResults.contents = data.join("\n")
