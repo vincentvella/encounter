@@ -2,7 +2,7 @@ import { RouteProp } from "@react-navigation/core";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 type AuthenticatedStackParams = {
-  home: undefined
+  tabs: undefined
   'sign-up/profile': undefined
   Call: undefined
 }
