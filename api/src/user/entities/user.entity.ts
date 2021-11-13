@@ -15,4 +15,7 @@ export class User implements UserType {
 
   @Field()
   role: RoleType
+
+  @Field()
+  password: string
 }

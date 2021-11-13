@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { StyleSheet, Text, TextInput, TextStyle } from "react-native"
+import { StyleSheet, Text, TextInput, TextInputProps, TextStyle } from "react-native"
 import { useTheme } from '../../services/theme'
 
 const styles = StyleSheet.create({
   text: {
     fontSize: 16,
+    paddingTop: 12,
   },
   textInput: {
     borderBottomWidth: 1,
@@ -26,14 +27,14 @@ type InputHandlers = {
   getValue: () => string
 }
 
-type InputProps = {
+interface InputProps extends TextInputProps {
   name: string
   ref: React.ForwardedRef<InputHandlers>
 }
 
-export type Input = InputHandlers
+export type Input = InputHandlers & TextInput
 
-export const Input = React.forwardRef<InputHandlers, InputProps>(({ name }, ref) => {
+export const Input = React.forwardRef<InputHandlers, InputProps>(({ name, ...props }, ref) => {
   const inputRef = React.useRef<TextInput | null>(null)
   const [value, setValue] = React.useState('')
 
@@ -49,6 +50,7 @@ export const Input = React.forwardRef<InputHandlers, InputProps>(({ name }, ref)
     <>
       <Text style={textStyle}>{name}</Text>
       <TextInput
+        {...props}
         ref={inputRef}
         style={textInputStyle}
         autoCapitalize="none"

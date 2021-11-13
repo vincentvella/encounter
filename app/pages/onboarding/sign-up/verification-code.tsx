@@ -3,13 +3,13 @@ import * as React from 'react'
 import { StyleSheet } from 'react-native';
 import { View } from 'react-native';
 import { useSetRecoilState } from 'recoil';
-import PrimaryButton from '../../components/button/primary';
-import { Input } from '../../components/inputs/input';
-import { useVerifyCodeLazyQuery } from '../../generated/types';
-import { RootRouteProp } from '../../services/navigation/types';
-import Cookie from '../../services/storage/cookie';
-import { useTheme } from '../../services/theme';
-import { isSignedIn } from '../../states/authentication';
+import PrimaryButton from '../../../components/button/primary';
+import { Input } from '../../../components/inputs/input';
+import { useVerifyCodeLazyQuery } from '../../../generated/types';
+import { RootRouteProp } from '../../../services/navigation/types';
+import Cookie from '../../../services/storage/cookie';
+import { useTheme } from '../../../services/theme';
+import { isSignedIn } from '../../../states/authentication';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,15 +18,15 @@ const styles = StyleSheet.create({
   innerContainer: {
     paddingHorizontal: 8,
   },
-  inputContainer: {
-    paddingVertical: 16
+  buttonContainer: {
+    paddingVertical: 12
   }
 })
 
 const VerificationCode = () => {
   const { colors } = useTheme()
   const verificationCodeRef = React.useRef<Input>(null)
-  const route = useRoute<RootRouteProp<'sign-in/verification-code'>>()
+  const route = useRoute<RootRouteProp<'sign-up/verification-code'>>()
   const setIsSignedIn = useSetRecoilState(isSignedIn)
 
   const [verifyCode, { loading }] = useVerifyCodeLazyQuery({
@@ -40,7 +40,7 @@ const VerificationCode = () => {
   })
 
   const onSubmit = React.useCallback(() => {
-    if (verificationCodeRef?.current?.getValue) {
+    if (verificationCodeRef.current) {
       verifyCode({
         variables: {
           code: verificationCodeRef.current.getValue(),
@@ -53,10 +53,10 @@ const VerificationCode = () => {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.innerContainer}>
-        <View style={styles.inputContainer}>
-          <Input ref={verificationCodeRef} name="Verify Code" />
+        <Input ref={verificationCodeRef} name="Verify Code" autoFocus onSubmitEditing={onSubmit} />
+        <View style={styles.buttonContainer}>
+          <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Verify Code" />
         </View>
-        <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Verify Code" />
       </View>
     </View>
   );

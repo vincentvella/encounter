@@ -12,7 +12,7 @@ generator client {
 
 enum Role {
   ADMIN
-  USER 
+  USER
 }
 
 model User {
@@ -20,6 +20,7 @@ model User {
   // Possible Profile Attributes
   phoneNumber String?  @unique
   fbUserId    String?  @unique
+  password    String
   // Relationships
   profile     Profile? // Signifies one or zero profiles for accounts
   role        Role     @default(USER)
@@ -28,7 +29,7 @@ model User {
 model Profile {
   id             String          @id @unique @default(uuid())
   // Relationships
-  user           User            @relation(fields: [userId], references: [id])
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String          @unique
   SearchCriteria SearchCriteria?
   // Attributes
@@ -42,7 +43,7 @@ model SearchCriteria {
   // Attributes
   searchRadius Float
   // Relationships
-  profile      Profile   @relation(fields: [profileId], references: [id])
+  profile      Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId    String    @unique
   location     Location?
   // location.latitude | location.longitude
@@ -52,6 +53,6 @@ model Location {
   id               Int            @id @unique @default(autoincrement())
   latitude         Float
   longitude        Float
-  searchCriteria   SearchCriteria @relation(fields: [searchCriteriaId], references: [id])
+  searchCriteria   SearchCriteria @relation(fields: [searchCriteriaId], references: [id], onDelete: Cascade)
   searchCriteriaId Int            @unique
 }

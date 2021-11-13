@@ -6,14 +6,15 @@ import Home from '../../pages/tabs/home';
 import Call from '../../pages/call';
 import Landing from '../../pages/landing';
 import ColorTheme from '../theme/color';
-import Phone from '../../pages/sign-in/phone';
+import Phone from '../../pages/onboarding/sign-up/phone';
 import { StackParams } from './types';
-import VerificationCode from '../../pages/sign-in/verification-code';
-import Profile from '../../pages/sign-up/profile';
+import VerificationCode from '../../pages/onboarding/sign-up/verification-code';
+import Profile from '../../pages/onboarding/profile';
 import { useRecoilValue } from 'recoil';
 import { isOnboarding, isSignedIn } from '../../states/authentication';
 import Cookie from '../storage/cookie';
 import Tabs from '../../pages/tabs';
+import SignIn from '../../pages/onboarding/sign-in';
 
 const Stack = createNativeStackNavigator<StackParams>()
 
@@ -39,8 +40,9 @@ export default function Navigator() {
       {!signedIn && (
         <Stack.Navigator>
           <Stack.Screen options={{ headerShown: false }} name="Landing" component={Landing} />
-          <Stack.Screen name="sign-in/phone" component={Phone} options={{ title: "Enter Phone Number" }} />
-          <Stack.Screen name="sign-in/verification-code" component={VerificationCode} options={{ title: "Verify Code" }} />
+          <Stack.Screen name="sign-in" component={SignIn} options={{ title: "Sign In" }} />
+          <Stack.Screen name="sign-up/phone" component={Phone} options={{ title: "Enter Phone Number" }} />
+          <Stack.Screen name="sign-up/verification-code" component={VerificationCode} options={{ title: "Verify Code" }} />
         </Stack.Navigator>
       )}
       {onboarding && (

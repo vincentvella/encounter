@@ -8,5 +8,8 @@ export class CreateUserDTO implements Partial<Omit<User, 'id'>> {
 
   @Field({ nullable: true })
   fbUserId: string | null
+
+  @Field()
+  password: string
 }
 

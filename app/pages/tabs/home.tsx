@@ -33,20 +33,21 @@ const Home = () => {
   const quote = React.useRef(getRandomQuote())
   const setIsSignedIn = useSetRecoilState(isSignedIn)
   const setIsOnboarding = useSetRecoilState(isOnboarding)
-
-  const { error } = useProfileQuery({
+  useProfileQuery({
     onCompleted: (data) => {
-      if (data?.findProfile === null) {
+      if (data.findProfile === null) {
         setIsOnboarding(true)
+      }
+    },
+    onError: (err) => {
+      if (err.message === 'User not found') {
+        setIsSignedIn(false)
+      }
+      if (err.message.includes('Unauthorized')) {
+        setIsSignedIn(false)
       }
     }
   })
-
-  React.useEffect(() => {
-    if (error && error.message.includes('Unauthorized')) {
-      setIsSignedIn(false)
-    }
-  }, [error])
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

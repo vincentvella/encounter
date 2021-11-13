@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import { default as VonageClass, NumberInsightError } from '@vonage/server-sdk'
-import { blacklist } from "./constants/blacklist"
+import { blacklist, BlacklistConfig } from "./constants/blacklist"
 import { CheckResponse } from "./entities/check.entity"
 import { RequestResponse } from "./entities/request.entity"
 const Vonage = require('@vonage/server-sdk')
@@ -13,7 +13,7 @@ export class VerificationService {
   })
 
   private requestBlacklist(number: string): RequestResponse | null {
-    const request_id = blacklist[number]
+    const { requestId: request_id } = blacklist[number]
     if (request_id) {
       return {
         request_id,
@@ -36,21 +36,25 @@ export class VerificationService {
     })
   })
 
-  private checkBlacklist(request_id: string): Omit<CheckResponse, 'access_token'> | null {
-    if (Object.values(blacklist).find(id => request_id === id)) {
-      return {
-        currency: 'USD',
-        event_id: '420',
-        price: '0',
-        request_id,
-        status: '0',
+  private checkBlacklist(c: BlacklistConfig): Omit<CheckResponse, 'access_token'> | null {
+    const blacklistConfig = Object.values(blacklist).find(config => c.requestId === config.requestId)
+    if (blacklistConfig) {
+      if (c.code === blacklistConfig.code) {
+        return {
+          currency: 'USD',
+          event_id: '420',
+          price: '0',
+          request_id: c.requestId,
+          status: '0',
+        }
       }
     }
     return null
   }
 
   check = (req: { request_id: string, code: string }) => new Promise<Omit<CheckResponse, 'access_token'> | null>((resolve) => {
-    const blacklistedResult = this.checkBlacklist(req.request_id)
+    const blacklistedResult = this.checkBlacklist({ ...req, requestId: req.request_id })
+    console.log(blacklistedResult)
     if (blacklistedResult) return resolve(blacklistedResult)
     this.provider.verify.check(req, (err, result) => {
       if (err) {

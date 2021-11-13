@@ -21,14 +21,27 @@ const styles = StyleSheet.create({
   buttonSection: {
     flex: 1,
     padding: 12,
-    justifyContent: 'space-evenly'
   },
+  footerSection: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    padding: 12,
+  },
+  footer: {
+    fontSize: 20
+  },
+  link: {
+    fontWeight: '700',
+    textDecorationLine: 'underline'
+  }
 })
 
 const Landing = () => {
   const { colors } = useTheme()
   const navigation = useNavigation<RootNavigationProp>()
-  const phoneSignIn = () => navigation.navigate('sign-in/phone')
+  const phoneSignUp = () => navigation.navigate('sign-up/phone')
+  const phoneSignIn = () => navigation.navigate('sign-in')
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
@@ -36,9 +49,12 @@ const Landing = () => {
       </View>
       <View style={styles.buttonSection}>
         <View>
-          <PrimaryButton color={colors.primary} title="Continue with Facebook" />
-          <PrimaryButton color={colors.default} onPress={phoneSignIn} title="Enter Phone Number" />
+          <PrimaryButton color={colors.primary} title="Sign up with Facebook" />
+          <PrimaryButton color={colors.default} onPress={phoneSignUp} title="Sign up with Phone Number" />
         </View>
+      </View>
+      <View style={styles.footerSection}>
+        <Text style={[styles.footer, { color: colors.text }]}>Already have an account? <Text onPress={phoneSignIn} style={styles.link}>Sign In</Text></Text>
       </View>
     </View>
   );

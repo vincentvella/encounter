@@ -7,6 +7,7 @@ type User {
   fbUserId: String
   phoneNumber: String
   role: String!
+  password: String!
 }
 
 type CheckResponse {
@@ -18,9 +19,8 @@ type CheckResponse {
   access_token: String
 }
 
-type RequestResponse {
-  request_id: String!
-  status: String!
+type Login {
+  access_token: String
 }
 
 type Profile {
@@ -37,10 +37,18 @@ type RemoveProfile {
 
 type Query {
   findUser(number: String!): User
-  requestCode(number: String!): RequestResponse
+  login(password: String!, number: String!): Login!
+  signUp(password: String!, number: String!): SignUp
   verifyCode(code: String!, request_id: String!): CheckResponse
   findAllProfiles: [Profile!]!
   findProfile: Profile
+}
+
+union SignUp = RequestResponse | Login
+
+type RequestResponse {
+  request_id: String!
+  status: String!
 }
 
 type Mutation {
@@ -53,6 +61,7 @@ type Mutation {
 input CreateUserDTO {
   phoneNumber: String
   fbUserId: String
+  password: String!
 }
 
 input CreateProfileDto {

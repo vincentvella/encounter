@@ -24,33 +24,34 @@ const styles = StyleSheet.create({
 
 const Profile = () => {
   const { colors } = useTheme()
-  // const navigation = useNavigation<AuthenticatedRootNavigationProp>()
   const emailRef = React.useRef<Input>(null)
   const firstNameRef = React.useRef<Input>(null)
   const lastNameRef = React.useRef<Input>(null)
   const setIsOnboarding = useSetRecoilState(isOnboarding)
 
-  const [createProfile, { loading, data }] = useCreateProfileMutation()
+  const [createProfile, { loading }] = useCreateProfileMutation({
+    onCompleted: data => {
+      if (data?.createProfile?.id) {
+        setIsOnboarding(false)
+        // Eventually to support search criteria
+        // navigation.navigate('home')
+      }
+    }
+  })
 
   const onSubmit = React.useCallback(() => {
-    createProfile({
-      variables: {
-        data: {
-          email: emailRef.current?.getValue() || '',
-          firstName: firstNameRef.current?.getValue() || '',
-          lastName: lastNameRef.current?.getValue() || '',
+    if (emailRef.current && firstNameRef.current && lastNameRef.current) {
+      createProfile({
+        variables: {
+          data: {
+            email: emailRef.current.getValue(),
+            firstName: firstNameRef.current.getValue(),
+            lastName: lastNameRef.current.getValue(),
+          }
         }
-      }
-    })
-  }, [])
-
-  React.useEffect(() => {
-    if (data?.createProfile?.id) {
-      setIsOnboarding(false)
-      // Eventually to support search criteria
-      // navigation.navigate('home')
+      })
     }
-  }, [data])
+  }, [])
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

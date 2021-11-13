@@ -32,7 +32,13 @@ export type CreateProfileDto = {
 
 export type CreateUserDto = {
   fbUserId?: Maybe<Scalars['String']>;
+  password: Scalars['String'];
   phoneNumber?: Maybe<Scalars['String']>;
+};
+
+export type Login = {
+  __typename?: 'Login';
+  access_token?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -78,7 +84,8 @@ export type Query = {
   findAllProfiles: Array<Profile>;
   findProfile?: Maybe<Profile>;
   findUser?: Maybe<User>;
-  requestCode?: Maybe<RequestResponse>;
+  login: Login;
+  signUp?: Maybe<SignUp>;
   verifyCode?: Maybe<CheckResponse>;
 };
 
@@ -88,8 +95,15 @@ export type QueryFindUserArgs = {
 };
 
 
-export type QueryRequestCodeArgs = {
+export type QueryLoginArgs = {
   number: Scalars['String'];
+  password: Scalars['String'];
+};
+
+
+export type QuerySignUpArgs = {
+  number: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -109,6 +123,8 @@ export type RequestResponse = {
   status: Scalars['String'];
 };
 
+export type SignUp = Login | RequestResponse;
+
 export type UpdateProfileDto = {
   email: Scalars['String'];
   firstName: Scalars['String'];
@@ -119,7 +135,9 @@ export type User = {
   __typename?: 'User';
   fbUserId?: Maybe<Scalars['String']>;
   id: Scalars['String'];
+  password: Scalars['String'];
   phoneNumber?: Maybe<Scalars['String']>;
+  role: Scalars['String'];
 };
 
 export type CreateProfileMutationVariables = Exact<{
@@ -131,22 +149,32 @@ export type CreateProfileMutation = { __typename?: 'Mutation', createProfile: { 
 
 export type CreateUserMutationVariables = Exact<{
   phoneNumber: Scalars['String'];
+  password: Scalars['String'];
 }>;
 
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, fbUserId?: string | null | undefined, phoneNumber?: string | null | undefined } };
+
+export type LoginQueryVariables = Exact<{
+  number: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type LoginQuery = { __typename?: 'Query', login: { __typename?: 'Login', accessToken?: string | null | undefined } };
 
 export type ProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ProfileQuery = { __typename?: 'Query', findProfile?: { __typename?: 'Profile', id: string, userId: string, email: string, firstName: string, lastName: string } | null | undefined };
 
-export type RequestCodeQueryVariables = Exact<{
+export type SignUpQueryVariables = Exact<{
   number: Scalars['String'];
+  password: Scalars['String'];
 }>;
 
 
-export type RequestCodeQuery = { __typename?: 'Query', requestCode?: { __typename?: 'RequestResponse', status: string, requestId: string } | null | undefined };
+export type SignUpQuery = { __typename?: 'Query', signUp?: { __typename?: 'Login', accessToken?: string | null | undefined } | { __typename?: 'RequestResponse', status: string, requestId: string } | null | undefined };
 
 export type VerifyCodeQueryVariables = Exact<{
   code: Scalars['String'];
@@ -195,8 +223,8 @@ export type CreateProfileMutationHookResult = ReturnType<typeof useCreateProfile
 export type CreateProfileMutationResult = Apollo.MutationResult<CreateProfileMutation>;
 export type CreateProfileMutationOptions = Apollo.BaseMutationOptions<CreateProfileMutation, CreateProfileMutationVariables>;
 export const CreateUserDocument = gql`
-    mutation CreateUser($phoneNumber: String!) {
-  createUser(data: {phoneNumber: $phoneNumber}) {
+    mutation CreateUser($phoneNumber: String!, $password: String!) {
+  createUser(data: {phoneNumber: $phoneNumber, password: $password}) {
     id
     fbUserId
     phoneNumber
@@ -219,6 +247,7 @@ export type CreateUserMutationFn = Apollo.MutationFunction<CreateUserMutation, C
  * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
  *   variables: {
  *      phoneNumber: // value for 'phoneNumber'
+ *      password: // value for 'password'
  *   },
  * });
  */
@@ -229,6 +258,42 @@ export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
+export const LoginDocument = gql`
+    query Login($number: String!, $password: String!) {
+  login(number: $number, password: $password) {
+    accessToken: access_token
+  }
+}
+    `;
+
+/**
+ * __useLoginQuery__
+ *
+ * To run a query within a React component, call `useLoginQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLoginQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLoginQuery({
+ *   variables: {
+ *      number: // value for 'number'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useLoginQuery(baseOptions: Apollo.QueryHookOptions<LoginQuery, LoginQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LoginQuery, LoginQueryVariables>(LoginDocument, options);
+      }
+export function useLoginLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LoginQuery, LoginQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LoginQuery, LoginQueryVariables>(LoginDocument, options);
+        }
+export type LoginQueryHookResult = ReturnType<typeof useLoginQuery>;
+export type LoginLazyQueryHookResult = ReturnType<typeof useLoginLazyQuery>;
+export type LoginQueryResult = Apollo.QueryResult<LoginQuery, LoginQueryVariables>;
 export const ProfileDocument = gql`
     query Profile {
   findProfile {
@@ -267,42 +332,48 @@ export function useProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Pr
 export type ProfileQueryHookResult = ReturnType<typeof useProfileQuery>;
 export type ProfileLazyQueryHookResult = ReturnType<typeof useProfileLazyQuery>;
 export type ProfileQueryResult = Apollo.QueryResult<ProfileQuery, ProfileQueryVariables>;
-export const RequestCodeDocument = gql`
-    query RequestCode($number: String!) {
-  requestCode(number: $number) {
-    requestId: request_id
-    status
+export const SignUpDocument = gql`
+    query SignUp($number: String!, $password: String!) {
+  signUp(number: $number, password: $password) {
+    ... on Login {
+      accessToken: access_token
+    }
+    ... on RequestResponse {
+      requestId: request_id
+      status
+    }
   }
 }
     `;
 
 /**
- * __useRequestCodeQuery__
+ * __useSignUpQuery__
  *
- * To run a query within a React component, call `useRequestCodeQuery` and pass it any options that fit your needs.
- * When your component renders, `useRequestCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSignUpQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSignUpQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useRequestCodeQuery({
+ * const { data, loading, error } = useSignUpQuery({
  *   variables: {
  *      number: // value for 'number'
+ *      password: // value for 'password'
  *   },
  * });
  */
-export function useRequestCodeQuery(baseOptions: Apollo.QueryHookOptions<RequestCodeQuery, RequestCodeQueryVariables>) {
+export function useSignUpQuery(baseOptions: Apollo.QueryHookOptions<SignUpQuery, SignUpQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RequestCodeQuery, RequestCodeQueryVariables>(RequestCodeDocument, options);
+        return Apollo.useQuery<SignUpQuery, SignUpQueryVariables>(SignUpDocument, options);
       }
-export function useRequestCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RequestCodeQuery, RequestCodeQueryVariables>) {
+export function useSignUpLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SignUpQuery, SignUpQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RequestCodeQuery, RequestCodeQueryVariables>(RequestCodeDocument, options);
+          return Apollo.useLazyQuery<SignUpQuery, SignUpQueryVariables>(SignUpDocument, options);
         }
-export type RequestCodeQueryHookResult = ReturnType<typeof useRequestCodeQuery>;
-export type RequestCodeLazyQueryHookResult = ReturnType<typeof useRequestCodeLazyQuery>;
-export type RequestCodeQueryResult = Apollo.QueryResult<RequestCodeQuery, RequestCodeQueryVariables>;
+export type SignUpQueryHookResult = ReturnType<typeof useSignUpQuery>;
+export type SignUpLazyQueryHookResult = ReturnType<typeof useSignUpLazyQuery>;
+export type SignUpQueryResult = Apollo.QueryResult<SignUpQuery, SignUpQueryVariables>;
 export const VerifyCodeDocument = gql`
     query VerifyCode($code: String!, $requestId: String!) {
   verifyCode(code: $code, request_id: $requestId) {

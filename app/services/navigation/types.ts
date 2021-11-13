@@ -9,8 +9,9 @@ type AuthenticatedStackParams = {
 
 type UnauthenticatedStackParams = {
   Landing: undefined
-  'sign-in/phone': undefined
-  'sign-in/verification-code': { requestId: string, number: string }
+  'sign-in': undefined
+  'sign-up/phone': undefined
+  'sign-up/verification-code': { requestId: string, number: string }
 }
 
 export type StackParams = AuthenticatedStackParams & UnauthenticatedStackParams

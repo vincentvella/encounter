@@ -1,0 +1,11 @@
+query SignUp($number: String!, $password: String!) {
+  signUp(number: $number, password: $password) {
+    ... on Login {
+      accessToken: access_token
+    }
+    ... on RequestResponse {
+      requestId: request_id
+      status
+    }
+  }
+}
