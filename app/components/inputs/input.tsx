@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { StyleSheet, Text, TextInput, TextInputProps, TextStyle } from "react-native"
+import { StyleSheet, Text, TextInput, TextInputProps, TextStyle, View } from "react-native"
 import { useTheme } from '../../services/theme'
 
 const styles = StyleSheet.create({
@@ -29,14 +29,17 @@ type InputHandlers = {
 
 interface InputProps extends TextInputProps {
   name: string
+  onModify?: (text: string) => string
   ref: React.ForwardedRef<InputHandlers>
 }
 
 export type Input = InputHandlers & TextInput
 
-export const Input = React.forwardRef<InputHandlers, InputProps>(({ name, ...props }, ref) => {
+export const Input = React.forwardRef<InputHandlers, InputProps>(({ name, onModify = f => f, style = {}, ...props }, ref) => {
   const inputRef = React.useRef<TextInput | null>(null)
   const [value, setValue] = React.useState('')
+
+  const onChangeValue = (text: string) => setValue(onModify(text))
 
   React.useImperativeHandle(ref, () => ({
     getValue: () => value,
@@ -44,8 +47,8 @@ export const Input = React.forwardRef<InputHandlers, InputProps>(({ name, ...pro
   }))
 
   const { colors: { text } } = useTheme()
-  const textStyle = React.useMemo<TextStyle[]>(() => ([styles.text, { color: text }]), [text])
-  const textInputStyle = React.useMemo<TextStyle[]>(() => ([styles.textInput, { color: text }]), [text])
+  const textStyle = React.useMemo<TextInputProps['style']>(() => ([styles.text, { color: text }]), [text])
+  const textInputStyle = React.useMemo<TextInputProps['style']>(() => ([styles.textInput, { color: text }, style]), [text])
   return (
     <>
       <Text style={textStyle}>{name}</Text>
@@ -55,7 +58,7 @@ export const Input = React.forwardRef<InputHandlers, InputProps>(({ name, ...pro
         style={textInputStyle}
         autoCapitalize="none"
         value={value}
-        onChangeText={setValue}
+        onChangeText={onChangeValue}
       />
     </>
   )

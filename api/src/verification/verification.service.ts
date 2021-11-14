@@ -5,6 +5,11 @@ import { CheckResponse } from "./entities/check.entity"
 import { RequestResponse } from "./entities/request.entity"
 const Vonage = require('@vonage/server-sdk')
 
+const requestConfig = {
+  pin_expiry: 3600,
+  workflow_id: 6
+} as const
+
 @Injectable()
 export class VerificationService {
   private readonly provider: VonageClass = new Vonage({
@@ -26,7 +31,7 @@ export class VerificationService {
   request = async (req: { number: string, brand: string }) => new Promise<RequestResponse | null>((resolve) => {
     const blacklistedResult = this.requestBlacklist(req.number)
     if (blacklistedResult) return resolve(blacklistedResult)
-    this.provider.verify.request({ ...req, pin_expiry: 3600, workflow_id: 6 }, (err, result) => {
+    this.provider.verify.request({ ...req, number: req.number.replace('+', ''), ...requestConfig }, (err, result) => {
       if (err) {
         console.error(err);
         throw new Error('Error sending request for phone verification')

@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 const VerificationCode = () => {
   const { colors } = useTheme()
   const verificationCodeRef = React.useRef<Input>(null)
-  const route = useRoute<RootRouteProp<'sign-up/verification-code'>>()
+  const route = useRoute<RootRouteProp<'SignUpVerificationCode'>>()
   const setIsSignedIn = useSetRecoilState(isSignedIn)
 
   const [verifyCode, { loading }] = useVerifyCodeLazyQuery({
@@ -50,10 +50,12 @@ const VerificationCode = () => {
     }
   }, [])
 
+  const onModify = (text: string) => text.replace(/[^0-9]/gi, '').substring(0, 4)
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.innerContainer}>
-        <Input ref={verificationCodeRef} name="Verify Code" autoFocus onSubmitEditing={onSubmit} />
+        <Input keyboardType="number-pad" ref={verificationCodeRef} name="Verify Code" autoFocus onSubmitEditing={onSubmit} onModify={onModify} />
         <View style={styles.buttonContainer}>
           <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Verify Code" />
         </View>

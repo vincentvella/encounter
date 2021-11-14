@@ -5,6 +5,7 @@ import { useToast } from 'react-native-toast-notifications';
 import { useSetRecoilState } from 'recoil';
 import PrimaryButton from '../../components/button/primary';
 import { Input } from '../../components/inputs/input';
+import { PhoneInput } from '../../components/inputs/phone-input';
 import { useLoginLazyQuery } from '../../generated/types';
 import Cookie from '../../services/storage/cookie';
 import { useTheme } from '../../services/theme';
@@ -65,7 +66,7 @@ const SignIn = () => {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.innerContainer}>
         <View style={styles.inputContainer}>
-          <Input ref={phoneNumberRef} name="Phone Number" autoFocus onSubmitEditing={onSubmitPhoneNumber} />
+          <PhoneInput ref={phoneNumberRef} name="Phone Number" autoFocus onSubmitEditing={onSubmitPhoneNumber} />
           <Input ref={passwordRef} name="Password" secureTextEntry onSubmitEditing={onSubmit} />
         </View>
         <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Sign In" />

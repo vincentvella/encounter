@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
 const Landing = () => {
   const { colors } = useTheme()
   const navigation = useNavigation<RootNavigationProp>()
-  const phoneSignUp = () => navigation.navigate('sign-up/phone')
-  const phoneSignIn = () => navigation.navigate('sign-in')
+  const phoneSignUp = () => navigation.navigate('SignUpPhone')
+  const phoneSignIn = () => navigation.navigate('SignIn')
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>

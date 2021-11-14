@@ -34,6 +34,7 @@ const Home = () => {
   const setIsSignedIn = useSetRecoilState(isSignedIn)
   const setIsOnboarding = useSetRecoilState(isOnboarding)
   useProfileQuery({
+    fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       if (data.findProfile === null) {
         setIsOnboarding(true)

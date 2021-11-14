@@ -3,15 +3,15 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 type AuthenticatedStackParams = {
   tabs: undefined
-  'sign-up/profile': undefined
+  SignUpProfile: undefined
   Call: undefined
 }
 
 type UnauthenticatedStackParams = {
   Landing: undefined
-  'sign-in': undefined
-  'sign-up/phone': undefined
-  'sign-up/verification-code': { requestId: string, number: string }
+  SignIn: undefined
+  SignUpPhone: undefined
+  SignUpVerificationCode: { requestId: string, number: string }
 }
 
 export type StackParams = AuthenticatedStackParams & UnauthenticatedStackParams

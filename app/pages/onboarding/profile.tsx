@@ -31,6 +31,7 @@ const Profile = () => {
 
   const [createProfile, { loading }] = useCreateProfileMutation({
     onCompleted: data => {
+      console.log(data)
       if (data?.createProfile?.id) {
         setIsOnboarding(false)
         // Eventually to support search criteria
@@ -53,13 +54,16 @@ const Profile = () => {
     }
   }, [])
 
+  const onSubmitEmail = () => firstNameRef?.current?.focus()
+  const onSubmitFirstName = () => lastNameRef?.current?.focus()
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.innerContainer}>
         <View style={styles.inputContainer}>
-          <Input ref={emailRef} name="Email" />
-          <Input ref={firstNameRef} name="First Name" />
-          <Input ref={lastNameRef} name="Last Name" />
+          <Input ref={emailRef} name="Email" onSubmitEditing={onSubmitEmail} />
+          <Input ref={firstNameRef} name="First Name" onSubmitEditing={onSubmitFirstName} />
+          <Input ref={lastNameRef} name="Last Name" onSubmitEditing={onSubmit} />
         </View>
         <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Verify Phone" />
       </View>

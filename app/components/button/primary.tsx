@@ -12,6 +12,9 @@ const styles = StyleSheet.create({
     padding: 16,
     fontWeight: '700'
   },
+  indicator: {
+    padding: 14.5
+  }
 })
 
 type ButtonProps = {
@@ -28,7 +31,7 @@ const PrimaryButton: React.FC<ButtonProps> = ({ title, textColor: color = 'white
     onPress={onPress}
     style={({ pressed }) => [styles.button, { backgroundColor, opacity: pressed ? 0.9 : undefined }]}
   >
-    {loading ? <ActivityIndicator color={color} /> : <Text style={[styles.buttonText, { color }]}>{title}</Text>}
+    {loading ? <ActivityIndicator color={color} style={styles.indicator} /> : <Text style={[styles.buttonText, { color }]}>{title}</Text>}
   </Pressable>
 )
 
