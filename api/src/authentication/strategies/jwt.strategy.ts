@@ -21,9 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JWTPayload) {
-    console.log(payload)
     const user = await this.authenticationService.validateUser(payload.phoneNumber)
-    console.log(user)
     if (!user) {
       throw new ApolloError('User not found', '404')
     }

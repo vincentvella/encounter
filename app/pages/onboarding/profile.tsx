@@ -5,8 +5,6 @@ import { useSetRecoilState } from 'recoil';
 import PrimaryButton from '../../components/button/primary';
 import { Input } from '../../components/inputs/input';
 import { useCreateProfileMutation } from '../../generated/types';
-// import { useNavigation } from '@react-navigation/core';
-// import { AuthenticatedRootNavigationProp } from '../../services/navigation/types';
 import { useTheme } from '../../services/theme';
 import { isOnboarding } from '../../states/authentication';
 
@@ -31,7 +29,6 @@ const Profile = () => {
 
   const [createProfile, { loading }] = useCreateProfileMutation({
     onCompleted: data => {
-      console.log(data)
       if (data?.createProfile?.id) {
         setIsOnboarding(false)
         // Eventually to support search criteria
@@ -61,7 +58,7 @@ const Profile = () => {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.innerContainer}>
         <View style={styles.inputContainer}>
-          <Input ref={emailRef} name="Email" onSubmitEditing={onSubmitEmail} />
+          <Input ref={emailRef} name="Email" onSubmitEditing={onSubmitEmail} autoFocus />
           <Input ref={firstNameRef} name="First Name" onSubmitEditing={onSubmitFirstName} />
           <Input ref={lastNameRef} name="Last Name" onSubmitEditing={onSubmit} />
         </View>

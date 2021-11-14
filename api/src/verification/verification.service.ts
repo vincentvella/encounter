@@ -59,7 +59,6 @@ export class VerificationService {
 
   check = (req: { request_id: string, code: string }) => new Promise<Omit<CheckResponse, 'access_token'> | null>((resolve) => {
     const blacklistedResult = this.checkBlacklist({ ...req, requestId: req.request_id })
-    console.log(blacklistedResult)
     if (blacklistedResult) return resolve(blacklistedResult)
     this.provider.verify.check(req, (err, result) => {
       if (err) {

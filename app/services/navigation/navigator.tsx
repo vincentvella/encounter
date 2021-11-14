@@ -40,7 +40,6 @@ export default function Navigator() {
   const scheme = useColorScheme();
   const signedIn = useRecoilValue(isSignedIn);
   const onboarding = useRecoilValue(isOnboarding)
-  console.log({ signedIn, onboarding })
 
   React.useEffect(() => {
     if (!signedIn) {

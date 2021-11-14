@@ -67,10 +67,7 @@ export const CountrySelector = React.forwardRef<InputHandlers, InputProps>(({ },
   const { colors: { text } } = useTheme()
   const textStyle = React.useMemo<TextStyle[]>(() => ([styles.text, { color: text }]), [text])
 
-  const onSelect = (country: Country) => {
-    console.log({ country })
-    setCountryCode(country.cca2)
-  }
+  const onSelect = (country: Country) => setCountryCode(country.cca2)
   const onOpen = () => setVisible(true)
   const onClose = () => setVisible(false)
 
