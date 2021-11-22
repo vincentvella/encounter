@@ -9,6 +9,11 @@ import { join } from 'path';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './authentication/guards/jwt-auth.guard';
 import { RolesGuard } from './authorization/roles.guard';
+import { RoomModule } from './room/room.module';
+import { BullModule } from '@nestjs/bull';
+import { RoomMessageConsumer } from './room/room.message.consumer';
+import { RoomMessageProducerService } from './room/room.message.producer';
+
 
 @Module({
   imports: [
@@ -21,10 +26,17 @@ import { RolesGuard } from './authorization/roles.guard';
       host: 'localhost',
       port: 6379,
     }),
+    BullModule.forRoot({
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
     PrismaModule,
     UserModule,
     AuthenticationModule,
-    ProfileModule
+    ProfileModule,
+    RoomModule,
   ],
   providers: [
     {
@@ -34,7 +46,8 @@ import { RolesGuard } from './authorization/roles.guard';
     {
       provide: APP_GUARD,
       useClass: RolesGuard
-    }
+    },
+    RoomMessageConsumer
   ]
 })
 export class AppModule { }

@@ -35,6 +35,11 @@ type RemoveProfile {
   status: String!
 }
 
+type Room {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   findUser(number: String!): User
   login(password: String!, number: String!): Login!
@@ -42,6 +47,8 @@ type Query {
   verifyCode(code: String!, request_id: String!): CheckResponse
   findAllProfiles: [Profile!]!
   findProfile: Profile
+  waitForRoom: Room!
+  room(id: Int!): Room!
 }
 
 union SignUp = RequestResponse | Login
@@ -56,6 +63,9 @@ type Mutation {
   createProfile(data: CreateProfileDto!): Profile!
   updateProfile(profile: UpdateProfileDto!, id: String!): Profile!
   removeProfile(id: String!): RemoveProfile!
+  createRoom(createRoomInput: CreateRoomInput!): Room!
+  updateRoom(updateRoomInput: UpdateRoomInput!): Room!
+  removeRoom(id: Int!): Room!
 }
 
 input CreateUserDTO {
@@ -74,4 +84,15 @@ input UpdateProfileDto {
   email: String!
   firstName: String!
   lastName: String!
+}
+
+input CreateRoomInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateRoomInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }

@@ -36,6 +36,8 @@ model Profile {
   email          String
   firstName      String
   lastName       String
+  HostedRoom     Room?           @relation("host")
+  JoinedRoom     Room?           @relation("guest")
 }
 
 model SearchCriteria {
@@ -55,4 +57,12 @@ model Location {
   longitude        Float
   searchCriteria   SearchCriteria @relation(fields: [searchCriteriaId], references: [id], onDelete: Cascade)
   searchCriteriaId Int            @unique
+}
+
+model Room {
+  id      String   @id @unique @default(uuid())
+  host    Profile? @relation(name: "host", fields: [hostId], references: [id], onDelete: Cascade)
+  hostId  String?  @unique
+  guest   Profile? @relation(name: "guest", fields: [guestId], references: [id], onDelete: Cascade)
+  guestId String?  @unique
 }

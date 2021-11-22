@@ -1,4 +1,4 @@
-import { User } from ".prisma/client";
+import { Profile, User } from ".prisma/client";
 import { Injectable } from "@nestjs/common";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { PrismaService } from "../prisma/prisma.service";
@@ -13,5 +13,9 @@ export class UserService {
 
   async findByNumber(phoneNumber: string) {
     return this.prisma.user.findUnique({ where: { phoneNumber } })
+  }
+
+  async findByIdWithProfile(id: string): Promise<User & { profile: Profile }> {
+    return this.prisma.user.findUnique({ where: { id }, include: { profile: true } })
   }
 }
