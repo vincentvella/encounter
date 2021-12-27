@@ -18,4 +18,8 @@ export class UserService {
   async findByIdWithProfile(id: string): Promise<User & { profile: Profile }> {
     return this.prisma.user.findUnique({ where: { id }, include: { profile: true } })
   }
+
+  async findById(id: string): Promise<User> {
+    return this.prisma.user.findUnique({ where: { id } })
+  }
 }

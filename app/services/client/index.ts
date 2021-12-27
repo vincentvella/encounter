@@ -1,9 +1,10 @@
 import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client'
+
 import auth from './links/auth';
-import http from './links/http';
+import networkingSplit from './links/networkingSplit';
 
 const client = new ApolloClient({
-  link: ApolloLink.from([auth, http]),
+  link: ApolloLink.from([auth, networkingSplit]),
   cache: new InMemoryCache(),
 });
 

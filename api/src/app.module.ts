@@ -11,7 +11,6 @@ import { JwtAuthGuard } from './authentication/guards/jwt-auth.guard';
 import { RolesGuard } from './authorization/roles.guard';
 import { RoomModule } from './room/room.module';
 import { BullModule } from '@nestjs/bull';
-import { RoomMessageConsumer } from './room/room.message.consumer';
 import { UserWaitingModule } from './user-waiting/user-waiting.module';
 
 
@@ -19,8 +18,19 @@ import { UserWaitingModule } from './user-waiting/user-waiting.module';
   imports: [
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      debug: true,
+      context: (req) => {
+        // Some hacky logic in order to pass authorization connection param to global auth handler
+        if (req?.extra?.request?.headers) {
+          req.extra.request.headers.authorization = req?.connectionParams?.authorization || null
+          return { req: req.extra.request }
+        }
+        return { req: req.request }
+      },
       subscriptions: {
-        'graphql-ws': true
+        'graphql-ws': {
+          path: '/graphql',
+        },
       },
     }),
     CacheModule.register({

@@ -33,7 +33,7 @@ export class RoomResolver {
     return { waiting: true }
   }
 
-  @Subscription(() => Room)
+  @Subscription((returns) => Room, { nullable: true })
   roomCreated() {
     return this.pubSub.asyncIterator(ROOM_CREATED_EVENT);
   }

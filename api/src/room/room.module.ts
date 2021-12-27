@@ -12,7 +12,13 @@ import { RoomMessageConsumer } from './room.message.consumer';
   imports: [BullModule.registerQueue({
     name: 'user-waiting',
   }), PubSubModule],
-  providers: [RoomResolver, RoomService, ProfileService, UserWaitingService, RoomMessageProducerService, RoomMessageConsumer,
+  providers: [
+    RoomResolver,
+    RoomService,
+    ProfileService,
+    UserWaitingService,
+    RoomMessageProducerService,
+    RoomMessageConsumer,
   ]
 })
 export class RoomModule { }

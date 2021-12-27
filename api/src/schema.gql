@@ -36,8 +36,14 @@ type RemoveProfile {
 }
 
 type Room {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """Room Id"""
+  id: String!
+
+  """Room Profile 1 ID"""
+  profile1Id: String!
+
+  """Room Profile 2 ID"""
+  profile2Id: String!
 }
 
 type PendingRoom {
@@ -119,5 +125,5 @@ input UpdateRoomInput {
 }
 
 type Subscription {
-  roomCreated: Room!
+  roomCreated: Room
 }

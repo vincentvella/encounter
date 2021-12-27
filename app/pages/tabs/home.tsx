@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { StyleSheet, Text } from 'react-native';
 import { View } from 'react-native';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import PrimaryButton from '../../components/button/primary';
-import { useProfileQuery } from '../../generated/types';
+import { useEnterRoomLazyQuery, useProfileQuery, useRoomCreatedSubscription } from '../../generated/types';
 import { getRandomQuote } from '../../services/quotes';
 import { useTheme } from '../../services/theme';
 import { isOnboarding, isSignedIn } from '../../states/authentication';
@@ -28,10 +28,12 @@ const styles = StyleSheet.create({
   }
 })
 
+// const config = { appId: 'encount-6b3b9-default-rtdb' }
+
 const Home = () => {
   const { colors } = useTheme()
   const quote = React.useRef(getRandomQuote())
-  const setIsSignedIn = useSetRecoilState(isSignedIn)
+  const [signedIn, setIsSignedIn] = useRecoilState(isSignedIn)
   const setIsOnboarding = useSetRecoilState(isOnboarding)
   useProfileQuery({
     fetchPolicy: 'cache-and-network',
@@ -50,13 +52,20 @@ const Home = () => {
     }
   })
 
+  // useSubscription
+  const [enterRoom, { loading, data }] = useEnterRoomLazyQuery()
+  const { loading: subLoading, data: subData } = useRoomCreatedSubscription({ skip: !data?.waitForRoom.waiting })
+  console.log({ loading, data })
+  console.log({ subData, subLoading })
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.innerContainer}>
         <View>
           <Text style={[styles.quote, { color: colors.text }]}>{quote.current.quote}</Text>
           <View style={styles.buttonContainer}>
-            <PrimaryButton color={colors.primary} title="Meet Someone New" />
+            <PrimaryButton color={colors.primary} title="Meet Someone New" onPress={enterRoom} loading={loading} />
+            {subData?.roomCreated?.id && <Text style={[{ color: colors.text }]}>{subData?.roomCreated?.id}</Text>}
           </View>
         </View>
       </View>

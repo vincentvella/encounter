@@ -30,6 +30,13 @@ export type CreateProfileDto = {
   lastName: Scalars['String'];
 };
 
+export type CreateRoomInput = {
+  /** Matcher id */
+  profile1Id: Scalars['String'];
+  /** Matchee id */
+  profile2Id: Scalars['String'];
+};
+
 export type CreateUserDto = {
   fbUserId?: Maybe<Scalars['String']>;
   password: Scalars['String'];
@@ -44,9 +51,14 @@ export type Login = {
 export type Mutation = {
   __typename?: 'Mutation';
   createProfile: Profile;
+  createRoom: Room;
   createUser: User;
+  createUserWaiting: UserWaiting;
   removeProfile: RemoveProfile;
+  removeRoom: Room;
+  removeUserWaiting: UserWaiting;
   updateProfile: Profile;
+  updateRoom: Room;
 };
 
 
@@ -55,8 +67,18 @@ export type MutationCreateProfileArgs = {
 };
 
 
+export type MutationCreateRoomArgs = {
+  createRoomInput: CreateRoomInput;
+};
+
+
 export type MutationCreateUserArgs = {
   data: CreateUserDto;
+};
+
+
+export type MutationCreateUserWaitingArgs = {
+  ProfileId: Scalars['String'];
 };
 
 
@@ -65,9 +87,29 @@ export type MutationRemoveProfileArgs = {
 };
 
 
+export type MutationRemoveRoomArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRemoveUserWaitingArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationUpdateProfileArgs = {
   id: Scalars['String'];
   profile: UpdateProfileDto;
+};
+
+
+export type MutationUpdateRoomArgs = {
+  updateRoomInput: UpdateRoomInput;
+};
+
+export type PendingRoom = {
+  __typename?: 'PendingRoom';
+  waiting: Scalars['Boolean'];
 };
 
 export type Profile = {
@@ -85,8 +127,11 @@ export type Query = {
   findProfile?: Maybe<Profile>;
   findUser?: Maybe<User>;
   login: Login;
+  room: Room;
   signUp?: Maybe<SignUp>;
+  userWaiting: UserWaiting;
   verifyCode?: Maybe<CheckResponse>;
+  waitForRoom: PendingRoom;
 };
 
 
@@ -101,9 +146,19 @@ export type QueryLoginArgs = {
 };
 
 
+export type QueryRoomArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type QuerySignUpArgs = {
   number: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type QueryUserWaitingArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -123,12 +178,35 @@ export type RequestResponse = {
   status: Scalars['String'];
 };
 
+export type Room = {
+  __typename?: 'Room';
+  /** Room Id */
+  id: Scalars['Int'];
+  /** Room Profile 1 ID */
+  profile1Id: Scalars['String'];
+  /** Room Profile 2 ID */
+  profile2Id: Scalars['String'];
+};
+
 export type SignUp = Login | RequestResponse;
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  roomCreated?: Maybe<Room>;
+};
 
 export type UpdateProfileDto = {
   email: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+};
+
+export type UpdateRoomInput = {
+  id: Scalars['Int'];
+  /** Matcher id */
+  profile1Id?: Maybe<Scalars['String']>;
+  /** Matchee id */
+  profile2Id?: Maybe<Scalars['String']>;
 };
 
 export type User = {
@@ -138,6 +216,15 @@ export type User = {
   password: Scalars['String'];
   phoneNumber?: Maybe<Scalars['String']>;
   role: Scalars['String'];
+};
+
+export type UserWaiting = {
+  __typename?: 'UserWaiting';
+  /** User Waiting ID */
+  id: Scalars['Int'];
+  profile: Profile;
+  profileId: Scalars['String'];
+  queuedAt: Scalars['String'];
 };
 
 export type CreateProfileMutationVariables = Exact<{
@@ -154,6 +241,11 @@ export type CreateUserMutationVariables = Exact<{
 
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, fbUserId?: string | null | undefined, phoneNumber?: string | null | undefined } };
+
+export type EnterRoomQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EnterRoomQuery = { __typename?: 'Query', waitForRoom: { __typename?: 'PendingRoom', waiting: boolean } };
 
 export type LoginQueryVariables = Exact<{
   number: Scalars['String'];
@@ -175,6 +267,11 @@ export type SignUpQueryVariables = Exact<{
 
 
 export type SignUpQuery = { __typename?: 'Query', signUp?: { __typename?: 'Login', accessToken?: string | null | undefined } | { __typename?: 'RequestResponse', status: string, requestId: string } | null | undefined };
+
+export type RoomCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RoomCreatedSubscription = { __typename?: 'Subscription', roomCreated?: { __typename?: 'Room', id: number } | null | undefined };
 
 export type VerifyCodeQueryVariables = Exact<{
   code: Scalars['String'];
@@ -258,6 +355,40 @@ export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
+export const EnterRoomDocument = gql`
+    query EnterRoom {
+  waitForRoom {
+    waiting
+  }
+}
+    `;
+
+/**
+ * __useEnterRoomQuery__
+ *
+ * To run a query within a React component, call `useEnterRoomQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEnterRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEnterRoomQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useEnterRoomQuery(baseOptions?: Apollo.QueryHookOptions<EnterRoomQuery, EnterRoomQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EnterRoomQuery, EnterRoomQueryVariables>(EnterRoomDocument, options);
+      }
+export function useEnterRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnterRoomQuery, EnterRoomQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EnterRoomQuery, EnterRoomQueryVariables>(EnterRoomDocument, options);
+        }
+export type EnterRoomQueryHookResult = ReturnType<typeof useEnterRoomQuery>;
+export type EnterRoomLazyQueryHookResult = ReturnType<typeof useEnterRoomLazyQuery>;
+export type EnterRoomQueryResult = Apollo.QueryResult<EnterRoomQuery, EnterRoomQueryVariables>;
 export const LoginDocument = gql`
     query Login($number: String!, $password: String!) {
   login(number: $number, password: $password) {
@@ -374,6 +505,35 @@ export function useSignUpLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Sig
 export type SignUpQueryHookResult = ReturnType<typeof useSignUpQuery>;
 export type SignUpLazyQueryHookResult = ReturnType<typeof useSignUpLazyQuery>;
 export type SignUpQueryResult = Apollo.QueryResult<SignUpQuery, SignUpQueryVariables>;
+export const RoomCreatedDocument = gql`
+    subscription RoomCreated {
+  roomCreated {
+    id
+  }
+}
+    `;
+
+/**
+ * __useRoomCreatedSubscription__
+ *
+ * To run a query within a React component, call `useRoomCreatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useRoomCreatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoomCreatedSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRoomCreatedSubscription(baseOptions?: Apollo.SubscriptionHookOptions<RoomCreatedSubscription, RoomCreatedSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<RoomCreatedSubscription, RoomCreatedSubscriptionVariables>(RoomCreatedDocument, options);
+      }
+export type RoomCreatedSubscriptionHookResult = ReturnType<typeof useRoomCreatedSubscription>;
+export type RoomCreatedSubscriptionResult = Apollo.SubscriptionResult<RoomCreatedSubscription>;
 export const VerifyCodeDocument = gql`
     query VerifyCode($code: String!, $requestId: String!) {
   verifyCode(code: $code, request_id: $requestId) {

@@ -62,7 +62,7 @@ const Profile = () => {
           <Input ref={firstNameRef} name="First Name" onSubmitEditing={onSubmitFirstName} />
           <Input ref={lastNameRef} name="Last Name" onSubmitEditing={onSubmit} />
         </View>
-        <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Verify Phone" />
+        <PrimaryButton loading={loading} onPress={onSubmit} color={colors.primary} title="Create Account" />
       </View>
     </View>
   );
