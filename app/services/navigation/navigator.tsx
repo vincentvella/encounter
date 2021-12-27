@@ -2,7 +2,6 @@ import * as React from 'react';
 import { LinkingOptions, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useColorScheme } from 'react-native';
-import Home from '../../pages/tabs/home';
 import Call from '../../pages/call';
 import Landing from '../../pages/landing';
 import ColorTheme from '../theme/color';
@@ -37,8 +36,8 @@ const linking: LinkingOptions<ReactNavigation.RootParamList> = {
 const Stack = createNativeStackNavigator<StackParams>()
 
 export default function Navigator() {
-  const scheme = useColorScheme();
-  const signedIn = useRecoilValue(isSignedIn);
+  const scheme = useColorScheme()
+  const signedIn = useRecoilValue(isSignedIn)
   const onboarding = useRecoilValue(isOnboarding)
 
   React.useEffect(() => {
@@ -46,13 +45,12 @@ export default function Navigator() {
       Cookie.remove('jwt')
     }
   }, [signedIn])
-
   return (
     <NavigationContainer theme={scheme === 'dark' ? ColorTheme.dark : ColorTheme.light} linking={linking}>
       {!!(signedIn && !onboarding) && (
         <Stack.Navigator>
           <Stack.Screen name="tabs" component={Tabs} options={{ headerShown: false }} />
-          <Stack.Screen name="Call" component={Call} />
+          <Stack.Screen name="call" component={Call} />
         </Stack.Navigator>
       )}
       {!signedIn && (

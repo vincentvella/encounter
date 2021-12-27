@@ -61,6 +61,7 @@ export class RoomMessageConsumer {
         })
         const match = await this.findMatch(userWaiting.profileId, possibleMatches)
         if (!match) {
+          // If no match found and search is within 30 seconds, re-queue the user to be reevaluated
           await new Promise(resolve => {
             setTimeout(async () => {
               await this.roomMessageProducerService.queueUser(userWaiting.id, userWaiting.queuedAt)

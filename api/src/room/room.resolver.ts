@@ -15,6 +15,9 @@ import { UserWaitingService } from 'src/user-waiting/user-waiting.service';
 
 const ROOM_CREATED_EVENT = 'roomCreated';
 
+const roomCreatedForUser = (room: Room, user: User) =>
+  !!(user?.id && (user.id === room.profile1.userId || user.id === room.profile2.userId))
+
 @Resolver(() => Room)
 export class RoomResolver {
   constructor(
@@ -33,8 +36,12 @@ export class RoomResolver {
     return { waiting: true }
   }
 
-  @Subscription((returns) => Room, { nullable: true })
-  roomCreated() {
+  @Subscription((returns) => Room, {
+    nullable: true,
+    filter: (payload: { roomCreated: Room }, variables, context) =>
+      !!roomCreatedForUser(payload.roomCreated, context?.req?.user)
+  })
+  roomCreated(@CurrentUser() user: User) {
     return this.pubSub.asyncIterator(ROOM_CREATED_EVENT);
   }
 

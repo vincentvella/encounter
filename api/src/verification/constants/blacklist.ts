@@ -10,5 +10,9 @@ export const blacklist: Record<string, BlacklistConfig> = {
   '+15559936460': {
     requestId: '-420',
     code: '6969'
+  },
+  '+15555556460': {
+    requestId: '-42069',
+    code: '6969'
   }
 }

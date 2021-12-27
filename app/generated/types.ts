@@ -181,9 +181,13 @@ export type RequestResponse = {
 export type Room = {
   __typename?: 'Room';
   /** Room Id */
-  id: Scalars['Int'];
+  id: Scalars['String'];
+  /** Room Profile 1 ID */
+  profile1: Profile;
   /** Room Profile 1 ID */
   profile1Id: Scalars['String'];
+  /** Room Profile 2 ID */
+  profile2: Scalars['String'];
   /** Room Profile 2 ID */
   profile2Id: Scalars['String'];
 };
@@ -271,7 +275,7 @@ export type SignUpQuery = { __typename?: 'Query', signUp?: { __typename?: 'Login
 export type RoomCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RoomCreatedSubscription = { __typename?: 'Subscription', roomCreated?: { __typename?: 'Room', id: number } | null | undefined };
+export type RoomCreatedSubscription = { __typename?: 'Subscription', roomCreated?: { __typename?: 'Room', id: string } | null | undefined };
 
 export type VerifyCodeQueryVariables = Exact<{
   code: Scalars['String'];

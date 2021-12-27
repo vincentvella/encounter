@@ -23,7 +23,8 @@ export class RoomService {
       data: {
         profile1Id,
         profile2Id
-      }
+      },
+      include: { profile1: true, profile2: true }
     })
   }
 

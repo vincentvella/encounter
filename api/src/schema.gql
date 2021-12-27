@@ -44,6 +44,12 @@ type Room {
 
   """Room Profile 2 ID"""
   profile2Id: String!
+
+  """Room Profile 1 ID"""
+  profile1: Profile!
+
+  """Room Profile 2 ID"""
+  profile2: String!
 }
 
 type PendingRoom {
