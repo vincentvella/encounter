@@ -1,11 +1,30 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateRoomInput } from './dto/create-room.input';
 import { UpdateRoomInput } from './dto/update-room.input';
 
+
 @Injectable()
 export class RoomService {
-  create(createRoomInput: CreateRoomInput) {
-    return 'This action adds a new room';
+  constructor(private readonly prisma: PrismaService) { }
+
+  removeUsersFromWaiting(profile1Id: string, profile2Id: string) {
+    return this.prisma.$transaction([
+      // Attempt to delete both users.. if successful - we add them to room
+      this.prisma.userWaiting.delete({ where: { profileId: profile1Id } }),
+      this.prisma.userWaiting.delete({ where: { profileId: profile2Id } })
+    ])
+  }
+
+  async create(createRoomInput: CreateRoomInput) {
+    const { profile1Id, profile2Id } = createRoomInput
+    await this.removeUsersFromWaiting(profile1Id, profile2Id)
+    return this.prisma.room.create({
+      data: {
+        profile1Id,
+        profile2Id
+      }
+    })
   }
 
   findAll() {

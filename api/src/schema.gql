@@ -40,6 +40,18 @@ type Room {
   exampleField: Int!
 }
 
+type PendingRoom {
+  waiting: Boolean!
+}
+
+type UserWaiting {
+  """User Waiting ID"""
+  id: Int!
+  profile: Profile!
+  profileId: String!
+  queuedAt: String!
+}
+
 type Query {
   findUser(number: String!): User
   login(password: String!, number: String!): Login!
@@ -47,8 +59,9 @@ type Query {
   verifyCode(code: String!, request_id: String!): CheckResponse
   findAllProfiles: [Profile!]!
   findProfile: Profile
-  waitForRoom: Room!
+  waitForRoom: PendingRoom!
   room(id: Int!): Room!
+  userWaiting(id: Int!): UserWaiting!
 }
 
 union SignUp = RequestResponse | Login
@@ -66,6 +79,8 @@ type Mutation {
   createRoom(createRoomInput: CreateRoomInput!): Room!
   updateRoom(updateRoomInput: UpdateRoomInput!): Room!
   removeRoom(id: Int!): Room!
+  createUserWaiting(ProfileId: String!): UserWaiting!
+  removeUserWaiting(id: Int!): UserWaiting!
 }
 
 input CreateUserDTO {
@@ -87,12 +102,22 @@ input UpdateProfileDto {
 }
 
 input CreateRoomInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """Matcher id"""
+  profile1Id: String!
+
+  """Matchee id"""
+  profile2Id: String!
 }
 
 input UpdateRoomInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  """Matcher id"""
+  profile1Id: String
+
+  """Matchee id"""
+  profile2Id: String
   id: Int!
+}
+
+type Subscription {
+  roomCreated: Room!
 }

@@ -9,7 +9,7 @@
     "gen:gql": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@apollo/client": "^3.4.16",
+    "@apollo/client": "^3.5.5",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-picker/picker": "^2.2.0",
     "@react-navigation/bottom-tabs": "^6.0.9",

@@ -12,13 +12,16 @@ import { RolesGuard } from './authorization/roles.guard';
 import { RoomModule } from './room/room.module';
 import { BullModule } from '@nestjs/bull';
 import { RoomMessageConsumer } from './room/room.message.consumer';
-import { RoomMessageProducerService } from './room/room.message.producer';
+import { UserWaitingModule } from './user-waiting/user-waiting.module';
 
 
 @Module({
   imports: [
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      subscriptions: {
+        'graphql-ws': true
+      },
     }),
     CacheModule.register({
       isGlobal: true,
@@ -37,6 +40,7 @@ import { RoomMessageProducerService } from './room/room.message.producer';
     AuthenticationModule,
     ProfileModule,
     RoomModule,
+    UserWaitingModule,
   ],
   providers: [
     {
@@ -47,7 +51,6 @@ import { RoomMessageProducerService } from './room/room.message.producer';
       provide: APP_GUARD,
       useClass: RolesGuard
     },
-    RoomMessageConsumer
   ]
 })
 export class AppModule { }

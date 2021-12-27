@@ -16,7 +16,7 @@ enum Role {
 }
 
 model User {
-  id          String   @id @unique @default(uuid())
+  id          String   @id @default(uuid())
   // Possible Profile Attributes
   phoneNumber String?  @unique
   fbUserId    String?  @unique
@@ -27,21 +27,23 @@ model User {
 }
 
 model Profile {
-  id             String          @id @unique @default(uuid())
+  id        String @id @default(uuid())
+  // Attributes
+  email     String
+  firstName String
+  lastName  String
+
   // Relationships
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String          @unique
   SearchCriteria SearchCriteria?
-  // Attributes
-  email          String
-  firstName      String
-  lastName       String
-  HostedRoom     Room?           @relation("host")
-  JoinedRoom     Room?           @relation("guest")
+  UserWaiting    UserWaiting?
+  RoomAsUser1    Room?           @relation("profile1")
+  RoomAsUser2    Room?           @relation("profile2")
 }
 
 model SearchCriteria {
-  id           Int       @id @unique @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   // Attributes
   searchRadius Float
   // Relationships
@@ -52,7 +54,7 @@ model SearchCriteria {
 }
 
 model Location {
-  id               Int            @id @unique @default(autoincrement())
+  id               Int            @id @default(autoincrement())
   latitude         Float
   longitude        Float
   searchCriteria   SearchCriteria @relation(fields: [searchCriteriaId], references: [id], onDelete: Cascade)
@@ -60,9 +62,16 @@ model Location {
 }
 
 model Room {
-  id      String   @id @unique @default(uuid())
-  host    Profile? @relation(name: "host", fields: [hostId], references: [id], onDelete: Cascade)
-  hostId  String?  @unique
-  guest   Profile? @relation(name: "guest", fields: [guestId], references: [id], onDelete: Cascade)
-  guestId String?  @unique
+  id         String  @id @default(uuid())
+  profile1   Profile @relation("profile1", fields: [profile1Id], references: [id])
+  profile2   Profile @relation("profile2", fields: [profile2Id], references: [id])
+  profile1Id String  @unique
+  profile2Id String  @unique
+}
+
+model UserWaiting {
+  id        Int      @id @default(autoincrement())
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String   @unique
+  queuedAt  DateTime @default(now())
 }

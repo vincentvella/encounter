@@ -1,28 +1,41 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
 import { RoomService } from './room.service';
 import { Room } from './entities/room.entity';
 import { CreateRoomInput } from './dto/create-room.input';
 import { UpdateRoomInput } from './dto/update-room.input';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
 import { CurrentUser } from 'src/user/user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { ProfileService } from 'src/profile/profile.service';
-import { UserService } from 'src/user/user.service';
 import { RoomMessageProducerService } from './room.message.producer';
+import { Inject } from '@nestjs/common';
+import { PUB_SUB } from 'src/pubSub/pubSub.module';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { PendingRoom } from './entities/pendingRoom.entity';
+import { UserWaitingService } from 'src/user-waiting/user-waiting.service';
+
+const ROOM_CREATED_EVENT = 'roomCreated';
 
 @Resolver(() => Room)
 export class RoomResolver {
   constructor(
     private readonly roomService: RoomService,
-    private readonly userService: UserService,
-    private readonly roomMessageProducerService: RoomMessageProducerService
+    private readonly profileService: ProfileService,
+    private readonly roomMessageProducerService: RoomMessageProducerService,
+    private readonly userWaitingService: UserWaitingService,
+    @Inject(PUB_SUB) private pubSub: RedisPubSub
   ) { }
 
-  @Query(() => Room)
+  @Query(() => PendingRoom)
   async waitForRoom(@CurrentUser() user: User) {
-    const userData = await this.userService.findByIdWithProfile(user.id)
-    await this.roomMessageProducerService.queueUser(userData)
+    const profile = await this.profileService.findOne(user.id)
+    const userWaiting = await this.userWaitingService.create(profile.id)
+    await this.roomMessageProducerService.queueUser(userWaiting.id, userWaiting.queuedAt)
+    return { waiting: true }
+  }
+
+  @Subscription(() => Room)
+  roomCreated() {
+    return this.pubSub.asyncIterator(ROOM_CREATED_EVENT);
   }
 
   @Mutation(() => Room)
