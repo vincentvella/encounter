@@ -3,7 +3,7 @@
     "name": "Encounter",
     "slug": "Encounter",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "scheme": "encounter",
@@ -12,6 +12,7 @@
       "android",
       "web"
     ],
+    "jsEngine": "hermes",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -26,10 +27,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.encounter.app",
-      "infoPlist": {
-        "NSCameraUsageDescription": "We need to access your camera in order to start video chats.",
-        "NSMicrophoneUsageDescription": "We need to access your microphone to send audio to other users."
-      }
     },
     "android": {
       "adaptiveIcon": {
@@ -40,6 +37,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "@config-plugins/react-native-webrtc",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+        },
+      ],
+    ],
   }
 }

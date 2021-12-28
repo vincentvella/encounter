@@ -6,12 +6,13 @@ import { ApolloProvider } from '@apollo/client';
 import { RecoilRoot } from 'recoil';
 import { ToastProvider } from 'react-native-toast-notifications';
 import { StyleShim } from './services/web/style-shim';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // TODO: https://github.com/WICG/focus-visible
 
 const App = () => {
   return (
-    <>
+    <GestureHandlerRootView>
       <StyleShim />
       <ToastProvider>
         <ApolloProvider client={client}>
@@ -21,7 +22,7 @@ const App = () => {
           </RecoilRoot>
         </ApolloProvider>
       </ToastProvider>
-    </>
+    </GestureHandlerRootView>
   );
 }
 
