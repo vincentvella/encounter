@@ -7,22 +7,31 @@ import { RecoilRoot } from 'recoil';
 import { ToastProvider } from 'react-native-toast-notifications';
 import { StyleShim } from './services/web/style-shim';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { StyleSheet } from 'react-native';
 
 // TODO: https://github.com/WICG/focus-visible
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  }
+})
+
 const App = () => {
   return (
-    <GestureHandlerRootView>
-      <StyleShim />
-      <ToastProvider>
-        <ApolloProvider client={client}>
-          <StatusBar style="auto" />
-          <RecoilRoot>
-            <Navigator />
-          </RecoilRoot>
-        </ApolloProvider>
-      </ToastProvider>
-    </GestureHandlerRootView>
+    <>
+      <GestureHandlerRootView style={styles.container}>
+        <StyleShim />
+        <ToastProvider>
+          <ApolloProvider client={client}>
+            <StatusBar style="auto" />
+            <RecoilRoot>
+              <Navigator />
+            </RecoilRoot>
+          </ApolloProvider>
+        </ToastProvider>
+      </GestureHandlerRootView>
+    </>
   );
 }
 

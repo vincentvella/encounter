@@ -1,95 +1,78 @@
 import * as React from 'react'
+import Socket from 'socket.io-client';
 import { useRoute } from '@react-navigation/core'
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { AuthenticatedRootRouteProp, } from '../services/navigation/types';
 import { useTheme } from '../services/theme';
+import VideoChat, { globalCall, globalCallRef } from '../components/call/call'
+import CallService from '../services/call'
+import { useProfileQuery } from '../generated/types';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  innerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  callWrapper: {
-    flex: 1,
-    width: '100%',
-  },
-  grid: {
-    flex: 1
-  },
-  remoteVideo: {
-    flex: 1
-  },
-  optionsContainer: {
-    position: 'absolute',
-    bottom: 40, // todo - drive off of safe area inset
-  },
-  options: {
-    flex: 1,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly'
-  },
-  button: {
-    borderColor: 'black',
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 20
-  },
-  buttonText: {
-    fontSize: 12,
-  }
-})
+// const videoStream = await mediaDevices.getUserMedia({
+//   audio: true,
+//   video: {
+//     facingMode: (isFrontByDefault ? 'user' : 'environment'),
+//     // mandatory: {
+//     //   minFrameRate: 30,
+//     //   minWidth: 640,
+//     //   minHeight: 380
+//     // },
+//     // optional: videoSourceId ? [{ sourceId: videoSourceId }] : []
+//   }
+// })
+
+// const connectionBuffer = new RTCPeerConnection({
+//   iceServers: [
+//     { url: 'stun:stun.l.google.com:19302' },
+//     { url: 'stun:stun1.l.google.com:19302' },
+//     { url: 'stun:stun2.l.google.com:19302' },
+//     { url: 'stun:stun3.l.google.com:19302' },
+//     { url: 'stun:stun4.l.google.com:19302' },
+//   ],
+// })
 
 const Call = () => {
-  // const Video = React.useRef<any>(null);
-  // const navigation = useNavigation()
-  // const [participants, setParticipants] = React.useState<Map<string, { participantSid: string, videoTrackSid: string }>>(new Map([]))
-  // const [isAudioEnabled, setIsAudioEnabled] = React.useState(true)
-  // const [connectionStatus, setConnectionStatus] = React.useState('connecting')
-  // const route = useRoute<any>()
-  // console.log(route.params)
+  const { colors } = useTheme()
+  const Chat = React.useRef(new CallService())
+  const [sessionId, setSessionId] = React.useState('');
+  const { data } = useProfileQuery()
+  const route = useRoute<AuthenticatedRootRouteProp<'call'>>()
+
+  React.useEffect(() => {
+    if (data) {
+      console.log('setting: ', `encounter-${route.params.id}-${data.findProfile?.id}`)
+      Chat.current.start({
+        optional: {},
+        key: `encounter-${route.params.id}-${data.findProfile?.id}`,
+      }, {})
+        .then(status => {
+          if (status) {
+            Chat.current.getSessionId((id: string) => {
+              console.log('setting session: ', id)
+              setSessionId(id);
+              console.log('calling: ', `encounter-${route.params.id}-${route.params.peer}`)
+              globalCall.call(`encounter-${route.params.id}-${route.params.peer}`, {})
+            });
+          }
+        })
+        .catch();
+    }
+    return () => {
+      Chat.current.end()
+    }
+  }, [data]);
 
   // React.useEffect(() => {
-  //   if (route.params.roomName && route.params.token) {
-  //     Video.current.connect({
-  //       roomName: route.params.roomName,
-  //       accessToken: route.params.token,
-  //     });
+  //   if (data && sessionId) {
+
   //   }
-  //   return () => {
-  //     _onEndButtonPress();
-  //   };
-  // }, [route.params]);
+  // }, [data, sessionId])
 
-  // const _onEndButtonPress = () => {
-  //   Video.current.disconnect();
-  // };
-
-  // const _onMuteButtonPress = () => {
-  //   Video.current
-  //     .setLocalAudioEnabled(!isAudioEnabled)
-  //     .then((isEnabled: boolean) => setIsAudioEnabled(isEnabled));
-  // };
-
-  // const _onFlipButtonPress = () => {
-  //   Video.current.flipCamera();
-  // };
-
-  // console.log(participants)
-  const { colors } = useTheme()
-  const route = useRoute<AuthenticatedRootRouteProp<'call'>>()
-  console.log({ route })
-
+  if (!sessionId) return null
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.innerContainer}>
-        <Text style={{ color: colors.text }}>Call: {route.params.id}</Text>
-      </View>
+    <View style={{ flex: 1 }}>
+      <VideoChat ref={globalCallRef} VideoChat={Chat} />
     </View>
   )
 }

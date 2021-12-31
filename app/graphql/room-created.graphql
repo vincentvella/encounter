@@ -1,5 +1,15 @@
 subscription RoomCreated {
   roomCreated {
     id
+    profile1Id
+    profile2Id
+  }
+}
+
+query RoomForUser {
+  findRoomForUser {
+    id
+    profile1Id
+    profile2Id
   }
 }

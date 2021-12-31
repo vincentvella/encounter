@@ -17,7 +17,6 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
 import com.facebook.react.bridge.JSIModulePackage;
-import com.twiliorn.library.TwilioPackage;
 import com.swmansion.reanimated.ReanimatedJSIModulePackage;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,7 +39,6 @@ public class MainApplication extends Application implements ReactApplication {
       List<ReactPackage> packages = new PackageList(this).getPackages();
       // Packages that cannot be autolinked yet can be added manually here, for example:
 
-      packages.add(new TwilioPackage());    
       return packages;
     }
 

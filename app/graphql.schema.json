@@ -491,7 +491,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "Int",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -787,6 +787,18 @@
             "type": {
               "kind": "OBJECT",
               "name": "Profile",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "findRoomForUser",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Room",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1172,7 +1184,39 @@
             "deprecationReason": null
           },
           {
+            "name": "profile1SocketId",
+            "description": "Room Profile 1 Socket ID",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "profile2",
+            "description": "Room Profile 2 ID",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Profile",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "profile2Id",
             "description": "Room Profile 2 ID",
             "args": [],
             "type": {
@@ -1188,8 +1232,8 @@
             "deprecationReason": null
           },
           {
-            "name": "profile2Id",
-            "description": "Room Profile 2 ID",
+            "name": "profile2SocketId",
+            "description": "Room Profile 2 Socket ID",
             "args": [],
             "type": {
               "kind": "NON_NULL",

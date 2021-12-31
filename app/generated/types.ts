@@ -88,7 +88,7 @@ export type MutationRemoveProfileArgs = {
 
 
 export type MutationRemoveRoomArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 
@@ -125,6 +125,7 @@ export type Query = {
   __typename?: 'Query';
   findAllProfiles: Array<Profile>;
   findProfile?: Maybe<Profile>;
+  findRoomForUser?: Maybe<Room>;
   findUser?: Maybe<User>;
   login: Login;
   room: Room;
@@ -186,10 +187,14 @@ export type Room = {
   profile1: Profile;
   /** Room Profile 1 ID */
   profile1Id: Scalars['String'];
+  /** Room Profile 1 Socket ID */
+  profile1SocketId: Scalars['String'];
   /** Room Profile 2 ID */
-  profile2: Scalars['String'];
+  profile2: Profile;
   /** Room Profile 2 ID */
   profile2Id: Scalars['String'];
+  /** Room Profile 2 Socket ID */
+  profile2SocketId: Scalars['String'];
 };
 
 export type SignUp = Login | RequestResponse;
@@ -275,7 +280,12 @@ export type SignUpQuery = { __typename?: 'Query', signUp?: { __typename?: 'Login
 export type RoomCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RoomCreatedSubscription = { __typename?: 'Subscription', roomCreated?: { __typename?: 'Room', id: string } | null | undefined };
+export type RoomCreatedSubscription = { __typename?: 'Subscription', roomCreated?: { __typename?: 'Room', id: string, profile1Id: string, profile2Id: string } | null | undefined };
+
+export type RoomForUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RoomForUserQuery = { __typename?: 'Query', findRoomForUser?: { __typename?: 'Room', id: string, profile1Id: string, profile2Id: string } | null | undefined };
 
 export type VerifyCodeQueryVariables = Exact<{
   code: Scalars['String'];
@@ -513,6 +523,8 @@ export const RoomCreatedDocument = gql`
     subscription RoomCreated {
   roomCreated {
     id
+    profile1Id
+    profile2Id
   }
 }
     `;
@@ -538,6 +550,42 @@ export function useRoomCreatedSubscription(baseOptions?: Apollo.SubscriptionHook
       }
 export type RoomCreatedSubscriptionHookResult = ReturnType<typeof useRoomCreatedSubscription>;
 export type RoomCreatedSubscriptionResult = Apollo.SubscriptionResult<RoomCreatedSubscription>;
+export const RoomForUserDocument = gql`
+    query RoomForUser {
+  findRoomForUser {
+    id
+    profile1Id
+    profile2Id
+  }
+}
+    `;
+
+/**
+ * __useRoomForUserQuery__
+ *
+ * To run a query within a React component, call `useRoomForUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoomForUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoomForUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRoomForUserQuery(baseOptions?: Apollo.QueryHookOptions<RoomForUserQuery, RoomForUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RoomForUserQuery, RoomForUserQueryVariables>(RoomForUserDocument, options);
+      }
+export function useRoomForUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomForUserQuery, RoomForUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RoomForUserQuery, RoomForUserQueryVariables>(RoomForUserDocument, options);
+        }
+export type RoomForUserQueryHookResult = ReturnType<typeof useRoomForUserQuery>;
+export type RoomForUserLazyQueryHookResult = ReturnType<typeof useRoomForUserLazyQuery>;
+export type RoomForUserQueryResult = Apollo.QueryResult<RoomForUserQuery, RoomForUserQueryVariables>;
 export const VerifyCodeDocument = gql`
     query VerifyCode($code: String!, $requestId: String!) {
   verifyCode(code: $code, request_id: $requestId) {

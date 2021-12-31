@@ -45,6 +45,12 @@ export class RoomResolver {
     return this.pubSub.asyncIterator(ROOM_CREATED_EVENT);
   }
 
+  @Query(() => Room, { nullable: true })
+  async findRoomForUser(@CurrentUser() user: User) {
+    const profile = await this.profileService.findOne(user.id)
+    return this.roomService.findRoomForUser(profile.id)
+  }
+
   @Mutation(() => Room)
   createRoom(@Args('createRoomInput') createRoomInput: CreateRoomInput) {
     return this.roomService.create(createRoomInput);
@@ -66,7 +72,7 @@ export class RoomResolver {
   }
 
   @Mutation(() => Room)
-  removeRoom(@Args('id', { type: () => Int }) id: number) {
+  removeRoom(@Args('id', { type: () => String }) id: string) {
     return this.roomService.remove(id);
   }
 }

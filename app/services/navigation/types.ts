@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 type AuthenticatedStackParams = {
   tabs: undefined
   SignUpProfile: undefined
-  call: { id: string }
+  call: { id: string, peer: string }
 }
 
 type UnauthenticatedStackParams = {

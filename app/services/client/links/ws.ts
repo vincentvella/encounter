@@ -10,10 +10,39 @@ import Cookie from '../../storage/cookie';
 
 class WebSocketLink extends ApolloLink {
   private client: Client;
+  private restartRequested = false;
+  private restart = () => {
+    this.restartRequested = true;
+  };
 
   constructor(options: ClientOptions) {
     super();
-    this.client = createClient(options);
+    this.client = createClient({
+      ...options,
+      on: {
+        ...options.on,
+        opened: (socket: any) => {
+          options.on?.opened?.(socket);
+
+          this.restart = () => {
+            if (socket.readyState === WebSocket.OPEN) {
+              // if the socket is still open for the restart, do the restart
+              socket.close(4205, 'Client Restart');
+            } else {
+              // otherwise the socket might've closed, indicate that you want
+              // a restart on the next opened event
+              this.restartRequested = true;
+            }
+          };
+
+          // just in case you were eager to restart
+          if (this.restartRequested) {
+            this.restartRequested = false;
+            this.restart();
+          }
+        },
+      },
+    });
   }
 
   public request(operation: Operation): Observable<FetchResult> {

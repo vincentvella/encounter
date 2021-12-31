@@ -4,7 +4,7 @@ import { StyleSheet, Text } from 'react-native';
 import { View } from 'react-native';
 import { useSetRecoilState } from 'recoil';
 import PrimaryButton from '../../components/button/primary';
-import { useEnterRoomLazyQuery, useProfileQuery, useRoomCreatedSubscription } from '../../generated/types';
+import { useEnterRoomLazyQuery, useProfileQuery, useRoomCreatedSubscription, useRoomForUserQuery } from '../../generated/types';
 import { AuthenticatedRootNavigationProp } from '../../services/navigation/types';
 import { getRandomQuote } from '../../services/quotes';
 import { useTheme } from '../../services/theme';
@@ -35,7 +35,7 @@ const Home = () => {
   const quote = React.useRef(getRandomQuote())
   const setIsSignedIn = useSetRecoilState(isSignedIn)
   const setIsOnboarding = useSetRecoilState(isOnboarding)
-  useProfileQuery({
+  const { data: profileData } = useProfileQuery({
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       if (data.findProfile === null) {
@@ -53,15 +53,45 @@ const Home = () => {
   })
 
   // useSubscription
-  const [enterRoom, { loading, data }] = useEnterRoomLazyQuery()
-  const { data: room } = useRoomCreatedSubscription({ skip: !data?.waitForRoom.waiting })
   const navigation = useNavigation<AuthenticatedRootNavigationProp>()
-
-  React.useEffect(() => {
-    if (room?.roomCreated?.id) {
-      navigation.navigate('call', { id: room.roomCreated.id })
+  const { data: roomData, loading: roomDataLoading, error, startPolling, stopPolling } = useRoomForUserQuery()
+  const [enterRoom, { loading, data }] = useEnterRoomLazyQuery({
+    onCompleted: () => {
+      startPolling(5000)
     }
-  }, [room])
+  })
+
+  useRoomCreatedSubscription({
+    skip: !data?.waitForRoom.waiting,
+    shouldResubscribe: true,
+    onSubscriptionData: ({ subscriptionData }) => {
+      if (subscriptionData.data?.roomCreated?.id) {
+        const peerId = profileData?.findProfile?.id
+        stopPolling()
+        navigation.navigate('call', {
+          id: subscriptionData.data.roomCreated.id,
+          peer: peerId === subscriptionData.data.roomCreated.profile1Id
+            ? subscriptionData.data.roomCreated.profile2Id
+            : subscriptionData.data.roomCreated.profile1Id
+        })
+      }
+    }
+  })
+
+  console.log({ skip: !data?.waitForRoom.waiting })
+  console.log({ roomData, roomDataLoading, error })
+  React.useEffect(() => {
+    if (roomData?.findRoomForUser) {
+      const peerId = profileData?.findProfile?.id
+      stopPolling()
+      navigation.navigate('call', {
+        id: roomData.findRoomForUser.id,
+        peer: peerId === roomData.findRoomForUser.profile1Id
+          ? roomData.findRoomForUser.profile2Id
+          : roomData.findRoomForUser.profile1Id
+      })
+    }
+  }, [roomData, stopPolling])
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from 'src/user/entities/user.entity';
 import { CreateRoomInput } from './dto/create-room.input';
 import { UpdateRoomInput } from './dto/update-room.input';
+import { Room } from './entities/room.entity';
 
 
 @Injectable()
@@ -28,6 +30,24 @@ export class RoomService {
     })
   }
 
+  async addSocketId(room: string, profileId: string, socketId: string) {
+    try {
+      const roomArray = await Promise.all([
+        this.prisma.room.update({
+          data: { profile1SocketId: socketId },
+          where: { profile1Id: profileId }
+        }),
+        this.prisma.room.update({
+          data: { profile2SocketId: socketId },
+          where: { profile2Id: profileId }
+        })
+      ])
+      return roomArray.filter(Boolean)[0]
+    } catch (err) {
+      console.error('Error adding socket id:', { room, profileId, socketId })
+    }
+  }
+
   findAll() {
     return `This action returns all room`;
   }
@@ -36,11 +56,25 @@ export class RoomService {
     return `This action returns a #${id} room`;
   }
 
+  findRoomForUser(profileId: string) {
+    return this.prisma.room.findFirst({ where: { OR: [{ profile1Id: profileId }, { profile2Id: profileId }] } })
+  }
+
   update(id: number, updateRoomInput: UpdateRoomInput) {
     return `This action updates a #${id} room`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} room`;
+  /**
+   * Delete's User's Room
+   * @param id Room ID
+   * @returns Promise<Prisma.Prisma__RoomClient<Room>>
+   */
+  async remove(socketId: string) {
+    try {
+      const room = await this.prisma.room.findFirst({ where: { OR: { profile2SocketId: socketId, profile1SocketId: socketId } } })
+      return this.prisma.room.delete({ where: { id: room.id } })
+    } catch (err) {
+      console.error('error deleting room', err)
+    }
   }
 }
