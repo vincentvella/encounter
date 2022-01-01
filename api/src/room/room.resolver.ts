@@ -71,7 +71,7 @@ export class RoomResolver {
     return this.roomService.update(updateRoomInput.id, updateRoomInput);
   }
 
-  @Mutation(() => Room)
+  @Mutation(() => Room, { nullable: true })
   removeRoom(@Args('id', { type: () => String }) id: string) {
     return this.roomService.remove(id);
   }

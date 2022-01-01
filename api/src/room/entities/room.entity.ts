@@ -18,10 +18,4 @@ export class Room implements RoomType {
 
   @Field(() => Profile, { description: 'Room Profile 2 ID' })
   profile2: Profile;
-
-  @Field(() => String, { description: 'Room Profile 1 Socket ID' })
-  profile1SocketId: string
-
-  @Field(() => String, { description: 'Room Profile 2 Socket ID' })
-  profile2SocketId: string
 }

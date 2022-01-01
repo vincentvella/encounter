@@ -1,60 +1,42 @@
 import * as React from 'react'
-import Socket from 'socket.io-client';
-import { useRoute } from '@react-navigation/core'
+import { useRoute, useNavigation, useNavigationState } from '@react-navigation/core'
+import { useFocusEffect } from '@react-navigation/native'
 import { View } from 'react-native';
-import { AuthenticatedRootRouteProp, } from '../services/navigation/types';
+import { AuthenticatedRootNavigationProp, AuthenticatedRootRouteProp, } from '../services/navigation/types';
 import { useTheme } from '../services/theme';
 import VideoChat, { globalCall, globalCallRef } from '../components/call/call'
 import CallService from '../services/call'
-import { useProfileQuery } from '../generated/types';
-
-// const videoStream = await mediaDevices.getUserMedia({
-//   audio: true,
-//   video: {
-//     facingMode: (isFrontByDefault ? 'user' : 'environment'),
-//     // mandatory: {
-//     //   minFrameRate: 30,
-//     //   minWidth: 640,
-//     //   minHeight: 380
-//     // },
-//     // optional: videoSourceId ? [{ sourceId: videoSourceId }] : []
-//   }
-// })
-
-// const connectionBuffer = new RTCPeerConnection({
-//   iceServers: [
-//     { url: 'stun:stun.l.google.com:19302' },
-//     { url: 'stun:stun1.l.google.com:19302' },
-//     { url: 'stun:stun2.l.google.com:19302' },
-//     { url: 'stun:stun3.l.google.com:19302' },
-//     { url: 'stun:stun4.l.google.com:19302' },
-//   ],
-// })
+import { useDeleteRoomMutation, useProfileQuery } from '../generated/types';
 
 const Call = () => {
   const { colors } = useTheme()
   const Chat = React.useRef(new CallService())
-  const [sessionId, setSessionId] = React.useState('');
   const { data } = useProfileQuery()
   const route = useRoute<AuthenticatedRootRouteProp<'call'>>()
+  const navigation = useNavigation<AuthenticatedRootNavigationProp>()
+
+  const [deleteRoom] = useDeleteRoomMutation()
+
+  useFocusEffect(React.useCallback(() => {
+    return () => {
+      try {
+        deleteRoom({ variables: { id: route.params.id } })
+      } catch (_) { }
+    }
+  }, [deleteRoom, route.params]))
 
   React.useEffect(() => {
     if (data) {
-      console.log('setting: ', `encounter-${route.params.id}-${data.findProfile?.id}`)
       Chat.current.start({
         optional: {},
         key: `encounter-${route.params.id}-${data.findProfile?.id}`,
-      }, {})
-        .then(status => {
-          if (status) {
-            Chat.current.getSessionId((id: string) => {
-              console.log('setting session: ', id)
-              setSessionId(id);
-              console.log('calling: ', `encounter-${route.params.id}-${route.params.peer}`)
-              globalCall.call(`encounter-${route.params.id}-${route.params.peer}`, {})
-            });
-          }
-        })
+      }).then(status => {
+        if (status) {
+          Chat.current.getSessionId((id: string) => {
+            globalCall.call(`encounter-${route.params.id}-${route.params.peer}`, {})
+          });
+        }
+      })
         .catch();
     }
     return () => {
@@ -62,17 +44,16 @@ const Call = () => {
     }
   }, [data]);
 
-  // React.useEffect(() => {
-  //   if (data && sessionId) {
 
-  //   }
-  // }, [data, sessionId])
-
-  if (!sessionId) return null
+  const onEnd = () => {
+    if (navigation.canGoBack()) {
+      navigation.pop()
+    }
+  }
 
   return (
     <View style={{ flex: 1 }}>
-      <VideoChat ref={globalCallRef} VideoChat={Chat} />
+      <VideoChat ref={globalCallRef} VideoChat={Chat} onEnd={onEnd} />
     </View>
   )
 }

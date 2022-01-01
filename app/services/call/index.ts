@@ -1,34 +1,26 @@
 import { Vibration } from 'react-native';
+import { MediaStream } from 'react-native-webrtc';
 import {
   ACCEPT_CALL,
   END_CALL,
-  JOIN_GROUP_CALL,
-  LEAVE_GROUP_CALL,
   MESSAGE,
   RECEIVED_CALL,
-  RECEIVED_GROUP_CALL,
   REMOTE_STREAM,
   SEND_MESSAGE,
   START_CALL,
-  START_GROUP_CALL,
   SetupPeer,
   TypeProps,
   UserDataProps,
-  VideoConfigs
 } from './contains';
 import {
   callToUser,
-  joinGroup,
-  leaveGroup,
   listeningRemoteCall,
   peerConnection,
   reconnect,
   destroy,
-  startGroup,
   startStream
 } from './peer';
 import { startWebRTC } from './webrtc';
-
 
 class Call {
   private stream: MediaStream | null = null;
@@ -36,6 +28,9 @@ class Call {
   private arrPeerConn: any[] = [];
   private arrCurrentCall: any[] = [];
   private sessionId: string | null = null;
+  private onEnd: () => void = () => { }
+
+  constructor() { }
 
   public events = {
     call: (receiverId: string, userData: object = {}) => {
@@ -92,30 +87,6 @@ class Call {
         SEND_MESSAGE.next({ peerConn: this.arrPeerConn, message });
       }
     },
-    groupCall: (groupSessionId: string[], userData: object = {}) => {
-      if (this.sessionId) {
-        this.events.streamEnable(true);
-        startGroup(this.sessionId, groupSessionId, userData);
-      } else {
-        console.log('Error: Session is null');
-      }
-    },
-    joinGroup: (arrSessionId: string[]) => {
-      if (this.sessionId) {
-        this.events.streamEnable(true);
-        joinGroup(this.sessionId, arrSessionId);
-      } else {
-        console.log('Error: Session is null');
-      }
-    },
-    leaveGroup: () => {
-      if (this.sessionId) {
-        this.events.streamDisable();
-        leaveGroup({ sessionId: this.sessionId, arrCurrentCall: this.arrCurrentCall, peerConn: this.arrPeerConn });
-      } else {
-        console.log('Error: Session is null');
-      }
-    },
     addStream: (callId: string) => {
       if (this.sessionId) {
         startStream(callId, this.stream, this.sessionId);
@@ -125,17 +96,13 @@ class Call {
     },
   }
 
-  async start(configPeer: SetupPeer, videoConfigs?: VideoConfigs) {
-    console.log('this...', this.sessionId)
+  async start(configPeer: SetupPeer) {
     if (this.sessionId === null) {
-      const myStream = await startWebRTC(videoConfigs);
-      console.log('myStream', myStream)
+      const myStream = await startWebRTC();
       this.stream = myStream;
       this.events.streamEnable(false);
       if (myStream) {
-        console.log('setting up mystream', myStream)
         const peer = await peerConnection(configPeer);
-        console.log('setting up stream', configPeer)
         if (peer) {
           this.peerServer = peer;
           return true;
@@ -146,6 +113,12 @@ class Call {
         return false;
       }
     }
+  }
+
+  end() {
+    this.events.streamDisable();
+    this.arrCurrentCall = [];
+    this.arrPeerConn = [];
   }
 
   stop() {
@@ -181,7 +154,6 @@ class Call {
 
   public listenings = {
     callEvents: (callback: (type: TypeProps, userdata?: UserDataProps) => void) => {
-
       START_CALL.subscribe((data: any) => {
         this.events.streamEnable(true);
         this.arrPeerConn.push(data.peerConn);
@@ -205,6 +177,7 @@ class Call {
         callback('END_CALL', null);
         this.arrCurrentCall = [];
         this.arrPeerConn = [];
+        this.onEnd()
       });
 
       REMOTE_STREAM.subscribe((data: any) => {
@@ -214,32 +187,6 @@ class Call {
       MESSAGE.subscribe((data: any) => {
         const sessionId = data?.sessionId;
         callback('MESSAGE', sessionId ? data : null);
-      });
-
-      START_GROUP_CALL.subscribe((data: any) => {
-        this.arrPeerConn.push(data.peerConn);
-        callback('START_GROUP_CALL', null);
-      });
-
-      RECEIVED_GROUP_CALL.subscribe((data: any) => {
-        this.events.streamEnable(true);
-        this.arrPeerConn.push(data.peerConn);
-        const userData = data?.userData;
-        callback('RECEIVED_GROUP_CALL', userData);
-      });
-
-      JOIN_GROUP_CALL.subscribe((data: any) => {
-        this.arrPeerConn.push(data.peerConn);
-        const sessionId = data?.sessionId;
-        callback('JOIN_GROUP_CALL', sessionId ? { sessionId } : null);
-      });
-      LEAVE_GROUP_CALL.subscribe((data: any) => {
-        const sessionId = data?.sessionId;
-        callback('LEAVE_GROUP_CALL', sessionId ? { sessionId } : null);
-        if (!sessionId) {
-          this.arrCurrentCall = [];
-          this.arrPeerConn = [];
-        }
       });
     },
     getRemoteStream: (callback: (remoteStream: any, sessionId?: string) => void) => {

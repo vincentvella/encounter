@@ -4,6 +4,7 @@ import {
   TouchableOpacity, View, Dimensions
 } from 'react-native';
 import { RTCView } from 'react-native-webrtc-web-shim';
+import CallService from '../../services/call'
 import { CallEvents } from '../../services/call/contains';
 import Timer from './timer'
 
@@ -125,12 +126,13 @@ export const globalCall = {
 };
 
 export interface Props {
-  name?: string;
+  VideoChat: React.MutableRefObject<CallService>
+  onEnd: () => void
 }
 
-const Call = React.forwardRef(({ VideoChat }, ref) => {
-
-  const [visible, setVisible] = React.useState<boolean>(false);
+const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
+  const previouslyVisible = React.useRef(false)
+  const [visible, setVisible] = React.useState(false);
   const stream = VideoChat.current.getLocalStream();
   const [remoteStream, setRemoteStream] = React.useState<any>(null);
   const [type, setType] = React.useState('');
@@ -138,8 +140,6 @@ const Call = React.forwardRef(({ VideoChat }, ref) => {
   const [videoEnabled, setVideoEnable] = React.useState(true);
   const [cameraType, setCameraType] = React.useState<'front' | 'end'>('front');
   const [remoteCameraType, setRemoteCameraType] = React.useState<'front' | 'end'>('front');
-  const [name, setName] = React.useState('');
-  const [avatar, setAvatar] = React.useState('');
 
   const call = (sessionId: string, userData: object) => {
     VideoChat.current.events.call(sessionId, userData);
@@ -177,16 +177,6 @@ const Call = React.forwardRef(({ VideoChat }, ref) => {
 
         if (type === CallEvents.received) {
           VideoChat.current.events.vibration.start();
-
-          if (userData?.sender_name && userData?.sender_avatar) {
-            setName(userData.sender_name);
-            setAvatar(userData.sender_avatar);
-          }
-        } else {
-          if (userData?.receiver_name && userData?.receiver_avatar) {
-            setName(userData.receiver_name);
-            setAvatar(userData.receiver_avatar);
-          }
         }
         setVisible(true);
       }
@@ -253,6 +243,14 @@ const Call = React.forwardRef(({ VideoChat }, ref) => {
     </View>)
   }
 
+  React.useEffect(() => {
+    if (previouslyVisible.current === true && !visible) {
+      onEnd()
+    } else if (visible) {
+      previouslyVisible.current = visible
+    }
+  }, [visible])
+
   if (!visible) {
     return null;
   }
@@ -265,10 +263,6 @@ const Call = React.forwardRef(({ VideoChat }, ref) => {
         setVisible(false);
       }}>
       <View style={styles.modalCall}>
-        {name.length > 0 && type !== CallEvents.accept && <Text style={styles.name}>{name}</Text>}
-        {avatar.length > 0 && type !== CallEvents.accept && (
-          <Image style={styles.avatar} source={{ uri: avatar }} />
-        )}
         {(type === CallEvents.start || type === CallEvents.received) && <Timer style={styles.timer} textStyle={styles.textTimer} start />}
         {type === CallEvents.accept && remoteStream && (
           <View style={{ flex: 1 }}>

@@ -1,7 +1,7 @@
+import { MediaStream } from 'react-native-webrtc';
 import { mediaDevices } from 'react-native-webrtc-web-shim';
-import { VideoConfigs } from './contains';
 
-const startWebRTC = async (videoConfigs?: VideoConfigs) => {
+const startWebRTC = async (): Promise<MediaStream> => {
   const sourceInfos = await mediaDevices.enumerateDevices()
   let isFront = true
   let videoSourceId;
@@ -23,13 +23,6 @@ const startWebRTC = async (videoConfigs?: VideoConfigs) => {
       optional: (videoSourceId ? [{ sourceId: videoSourceId }] : [])
     }
   })
-    .then(stream => {
-      return stream
-    })
-    .catch(error => {
-      // Log error
-    });
-
 };
 
 export { startWebRTC };

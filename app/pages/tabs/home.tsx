@@ -68,7 +68,7 @@ const Home = () => {
       if (subscriptionData.data?.roomCreated?.id) {
         const peerId = profileData?.findProfile?.id
         stopPolling()
-        navigation.navigate('call', {
+        navigation.push('call', {
           id: subscriptionData.data.roomCreated.id,
           peer: peerId === subscriptionData.data.roomCreated.profile1Id
             ? subscriptionData.data.roomCreated.profile2Id
@@ -84,7 +84,7 @@ const Home = () => {
     if (roomData?.findRoomForUser) {
       const peerId = profileData?.findProfile?.id
       stopPolling()
-      navigation.navigate('call', {
+      navigation.push('call', {
         id: roomData.findRoomForUser.id,
         peer: peerId === roomData.findRoomForUser.profile1Id
           ? roomData.findRoomForUser.profile2Id

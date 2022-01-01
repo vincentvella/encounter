@@ -3,15 +3,11 @@ import {
   CallEvents,
   ACCEPT_CALL,
   END_CALL,
-  JOIN_GROUP_CALL,
-  LEAVE_GROUP_CALL,
   MESSAGE,
   RECEIVED_CALL,
-  RECEIVED_GROUP_CALL,
   REMOTE_STREAM,
   SEND_MESSAGE,
   START_CALL,
-  START_GROUP_CALL
 } from '../contains';
 import Peer from './peer';
 
@@ -38,14 +34,6 @@ const listeningRemoteCall = (sessionId: string, myStream: any) => {
           // events send message
           if (data.type === CallEvents.message) {
             MESSAGE.next({ sessionId: data.sessionId, message: data.message });
-          }
-          // events group call
-          if (data.type === CallEvents.startGroup) {
-            RECEIVED_GROUP_CALL.next({ peerConn, userData: data.userData });
-          }
-          // events join group call
-          if (data.type === CallEvents.joinGroup) {
-            JOIN_GROUP_CALL.next({ peerConn, sessionId: data.sessionId });
           }
         });
       });
@@ -156,78 +144,6 @@ const callToUser = (sessionId: string, receiverId: string, userData: any) => {
   }
 };
 
-const startGroup = (sessionId: string, arrSessionId: string[], userData: any) => {
-  arrSessionId.map(receiverId => {
-    if (receiverId !== sessionId) {
-      const peerConn = peer.connect(receiverId);
-      if (peerConn) {
-        peerConn.on('error', (e: any) => {
-          // when connect error then close call
-          console.log(e)
-          LEAVE_GROUP_CALL.next({ sessionId: receiverId });
-        });
-        peerConn.on('open', () => {
-          // send a message to the other
-          userData.groupSessionId = [...arrSessionId, sessionId];
-          const data = {
-            type: CallEvents.startGroup,
-            userData,
-          }
-          peerConn.send(data);
-          // save current connection
-          START_GROUP_CALL.next({ peerConn });
-        });
-      }
-    }
-  });
-};
-
-const joinGroup = (sessionId: string, arrSessionId: string[]) => {
-  arrSessionId.map(receiverId => {
-    if (sessionId !== receiverId) {
-      const peerConn = peer.connect(receiverId);
-      if (peerConn) {
-        peerConn.on('error', (e: any) => {
-          // when connect error then close call
-          console.log(e)
-          LEAVE_GROUP_CALL.next({ sessionId: receiverId });
-        });
-        peerConn.on('open', () => {
-          // send a message to the other
-          const data = {
-            type: CallEvents.joinGroup,
-            sessionId
-          }
-          peerConn.send(data);
-          // save current connection
-          JOIN_GROUP_CALL.next({ peerConn });
-        });
-      }
-    }
-  });
-};
-
-const leaveGroup = (data: any) => {
-  if (data) {
-    if (data?.arrCurrentCall) {
-      data.arrCurrentCall.map((item: any) => {
-        if (item) {
-          item.close();
-        }
-      });
-    }
-
-    if (data?.peerConn) {
-      data.peerConn.map((item: any) => {
-        if (item) {
-          item.close();
-        }
-      });
-    }
-  }
-  LEAVE_GROUP_CALL.next();
-}
-
 const startStream = (sessionId: string, myStream: any, mySessionId?: string) => {
   if (peer) {
     const options = { metadata: { "sessionId": mySessionId } };
@@ -258,9 +174,6 @@ export {
   peerConnection,
   listeningRemoteCall,
   callToUser,
-  startGroup,
-  joinGroup,
-  leaveGroup,
   startStream,
   disconnect,
   reconnect,

@@ -50,12 +50,6 @@ type Room {
 
   """Room Profile 2 ID"""
   profile2: Profile!
-
-  """Room Profile 1 Socket ID"""
-  profile1SocketId: String!
-
-  """Room Profile 2 Socket ID"""
-  profile2SocketId: String!
 }
 
 type PendingRoom {
@@ -97,7 +91,7 @@ type Mutation {
   removeProfile(id: String!): RemoveProfile!
   createRoom(createRoomInput: CreateRoomInput!): Room!
   updateRoom(updateRoomInput: UpdateRoomInput!): Room!
-  removeRoom(id: String!): Room!
+  removeRoom(id: String!): Room
   createUserWaiting(ProfileId: String!): UserWaiting!
   removeUserWaiting(id: Int!): UserWaiting!
 }

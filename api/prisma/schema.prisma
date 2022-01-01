@@ -62,13 +62,11 @@ model Location {
 }
 
 model Room {
-  id               String  @id @default(uuid())
-  profile1         Profile @relation("profile1", fields: [profile1Id], references: [id])
-  profile2         Profile @relation("profile2", fields: [profile2Id], references: [id])
-  profile1Id       String  @unique
-  profile2Id       String  @unique
-  profile1SocketId String?
-  profile2SocketId String?
+  id         String  @id @default(uuid())
+  profile1   Profile @relation("profile1", fields: [profile1Id], references: [id])
+  profile2   Profile @relation("profile2", fields: [profile2Id], references: [id])
+  profile1Id String  @unique
+  profile2Id String  @unique
 }
 
 model UserWaiting {

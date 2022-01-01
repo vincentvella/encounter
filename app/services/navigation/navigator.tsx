@@ -50,7 +50,7 @@ export default function Navigator() {
       {!!(signedIn && !onboarding) && (
         <Stack.Navigator>
           <Stack.Screen name="tabs" component={Tabs} options={{ headerShown: false }} />
-          <Stack.Screen name="call" component={Call} />
+          <Stack.Screen name="call" component={Call} options={{ presentation: 'fullScreenModal', headerShown: false }} />
         </Stack.Navigator>
       )}
       {!signedIn && (
