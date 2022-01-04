@@ -7,7 +7,7 @@ import { RecoilRoot } from 'recoil';
 import { ToastProvider } from 'react-native-toast-notifications';
 import { StyleShim } from './services/web/style-shim';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StyleSheet } from 'react-native';
+import { LogBox, StyleSheet } from 'react-native';
 
 // TODO: https://github.com/WICG/focus-visible
 
@@ -16,6 +16,8 @@ const styles = StyleSheet.create({
     flex: 1
   }
 })
+
+LogBox.ignoreLogs(['Setting a timer'])
 
 const App = () => {
   return (

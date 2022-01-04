@@ -1,4 +1,3 @@
-import { Vibration } from 'react-native';
 import { MediaStream } from 'react-native-webrtc';
 import {
   ACCEPT_CALL,
@@ -73,14 +72,6 @@ class Call {
       this.stream?.getAudioTracks().map((track: any) => {
         track.enabled = enable;
       });
-    },
-    vibration: {
-      start: () => {
-        Vibration.vibrate(2000, true);
-      },
-      cancel: () => {
-        Vibration.cancel();
-      }
     },
     message: (message: any) => {
       if (this.arrPeerConn.length > 0) {

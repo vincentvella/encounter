@@ -32,17 +32,6 @@ const styles = StyleSheet.create({
   }
 })
 
-const getParams = (
-  room: Room | HasValue<HasValue<SubscriptionResult<RoomCreatedSubscription, any>['data']>['roomCreated']>,
-  profileId?: string
-): AuthenticatedStackParams['call'] => {
-  const { id, callerId, calleeId } = room
-  if (profileId) {
-    return { id, peer: profileId === callerId ? callerId : calleeId }
-  }
-  return { id, peer: 'unknown' }
-}
-
 const Home = () => {
   const { colors } = useTheme()
   const quote = React.useRef(getRandomQuote())
@@ -65,7 +54,6 @@ const Home = () => {
     }
   })
 
-  // useSubscription
   const navigation = useNavigation<AuthenticatedRootNavigationProp>()
   const { data: roomData, loading: roomDataLoading, error, startPolling, stopPolling } = useRoomForUserQuery()
   const [enterRoom, { loading, data }] = useEnterRoomLazyQuery({
@@ -91,8 +79,6 @@ const Home = () => {
     }
   })
 
-  console.log({ skip: !data?.waitForRoom.waiting })
-  console.log({ roomData, roomDataLoading, error })
   React.useEffect(() => {
     if (roomData?.findRoomForUser) {
       const peerId = profileData?.findProfile?.id

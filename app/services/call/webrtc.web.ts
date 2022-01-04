@@ -16,15 +16,14 @@ const startWebRTC = async (): Promise<MediaStream> => {
 
   return await mediaDevices.getUserMedia({
     audio: true,
-    video: {
-      facingMode: (isFront ? 'user' : 'environment'),
-      // mandatory: {
-      //   minFrameRate: 30,
-      //   minWidth: 640,
-      //   minHeight: 380
-      // },
-      optional: videoSourceId ? [{ sourceId: videoSourceId }] : []
-    }
+    video: true
+    // facingMode: (isFront ? 'user' : 'environment'),
+    // mandatory: {
+    //   minFrameRate: 30,
+    //   minWidth: 640,
+    //   minHeight: 380
+    // },
+    // optional: videoSourceId ? [{ sourceId: videoSourceId }] : []
   })
 };
 

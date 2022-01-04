@@ -1,25 +1,15 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Dimensions, Text } from 'react-native';
 import { RTCView } from 'react-native-webrtc-web-shim';
 import CallService from '../../services/call'
 import { CallEvents } from '../../services/call/contains';
 import CallButton from './call-button';
-import Timer from './timer'
 
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  main: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalCall: {
+  callContainer: {
     flex: 1,
     backgroundColor: 'gray',
     alignItems: 'center',
@@ -32,12 +22,18 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   boxMyStream: {
-    borderRadius: 10,
-    padding: 3,
+    maxWidth: 200,
     position: 'absolute',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
     zIndex: 99999,
     bottom: 140,
-    backgroundColor: 'white',
     right: 10,
   },
   myStream: {
@@ -56,44 +52,9 @@ const styles = StyleSheet.create({
     width: width,
     height: height,
   },
-  name: {
-    fontSize: 20,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginTop: 20,
-  },
-  timer: {
-    backgroundColor: 'transparent',
-    minWidth: 70,
-    minHeight: 70,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 50
-  },
   textTimer: {
+    color: 'white',
     fontSize: 20
-  },
-  timer2: {
-    backgroundColor: 'transparent',
-    minWidth: 70,
-    minHeight: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 35,
-    borderWidth: 2,
-    borderColor: 'white',
-    position: 'absolute',
-    zIndex: 9,
-    right: 10,
-    top: 10
-  },
-  textTimer2: {
-    fontSize: 12
   },
 });
 
@@ -125,20 +86,19 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
     VideoChat.current.events.call(sessionId, userData);
   };
 
-  React.useImperativeHandle(ref, () => {
-    return { call };
-  });
+  React.useImperativeHandle(ref, () => ({ call }))
 
   React.useEffect(() => {
-    const ringtime = 20;
+    let mounted = true
 
     VideoChat.current.listenings.getRemoteStream((remoteStream) => {
+      if (!mounted) return
       stream.current = VideoChat.current.getLocalStream()
       setRemoteStream(remoteStream);
     });
 
     VideoChat.current.listenings.callEvents((type, userData: any) => {
-
+      if (!mounted) return
       console.log(type, userData);
 
       if (type !== CallEvents.message) {
@@ -148,29 +108,19 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
       if (type === CallEvents.received || type === CallEvents.start) {
         video(true);
         audio(true);
-        let time = ringtime;
-        intervals.current.push(setInterval(() => {
-          time = time - 1;
-          if (time === 0) {
-            endCall();
-            intervals.current.forEach(i => clearInterval(i))
-          }
-        }, 1000))
 
         if (type === CallEvents.received) {
-          VideoChat.current.events.vibration.start();
+          VideoChat.current.events.acceptCall();
         }
         setVisible(true);
       }
 
       if (type === CallEvents.accept) {
         intervals.current.forEach(i => clearInterval(i))
-        VideoChat.current.events.vibration.cancel();
       }
 
       if (type === CallEvents.end) {
         intervals.current.forEach(i => clearInterval(i))
-        VideoChat.current.events.vibration.cancel();
         setVisible(false);
         setAudioEnable(true);
         setVideoEnable(true);
@@ -182,6 +132,7 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
         }
       }
     });
+    return () => { mounted = false }
   }, []);
 
 
@@ -242,19 +193,14 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
   }
 
   return (
-    <View style={styles.modalCall}>
-      {(type === CallEvents.start || type === CallEvents.received) && <Timer style={styles.timer} textStyle={styles.textTimer} start />}
+    <View style={styles.callContainer}>
+      {(type === CallEvents.start || type === CallEvents.received) && <Text style={styles.textTimer}>Connecting...</Text>}
       {!!(type === CallEvents.accept && remoteStream) && (
         <View style={{ flex: 1 }} pointerEvents="auto">
           <RTCView mirror={remoteCameraType === 'front' ? true : false} stream={remoteStream} style={styles.stream} objectFit="cover" />
           {stream.current && (
             <View style={styles.boxMyStream}>
               <RTCView mirror={cameraType === 'front' ? true : false} stream={stream.current} style={styles.myStream} objectFit="cover" />
-              {type === CallEvents.accept &&
-                <Timer
-                  style={styles.timer2}
-                  textStyle={styles.textTimer2} start
-                />}
               <TouchableOpacity onPress={switchCamera} style={styles.iconCamera} >
                 <MaterialIcons name="switch-camera" color="white" size={30} />
               </TouchableOpacity>
@@ -264,12 +210,6 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
       )}
       {type === CallEvents.start && (
         <View style={styles.manageCall}>
-          <CallButton icon='call-end' color="red" onPress={onPressEnd} size={30} />
-        </View>
-      )}
-      {type === CallEvents.received && (
-        <View style={styles.manageCall}>
-          <CallButton icon='call' color="green" onPress={acceptCall} size={30} />
           <CallButton icon='call-end' color="red" onPress={onPressEnd} size={30} />
         </View>
       )}

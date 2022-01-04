@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-webrtc-web-shim/src/RTCView.web.js b/node_modules/react-native-webrtc-web-shim/src/RTCView.web.js
+index d7bd080..0b92d25 100644
+--- a/node_modules/react-native-webrtc-web-shim/src/RTCView.web.js
++++ b/node_modules/react-native-webrtc-web-shim/src/RTCView.web.js
+@@ -17,7 +17,7 @@ export default React.memo(function RTCView({ stream, videoProps = {} }) {
+ 
+   return (
+     <Video
+-      style={{ flex: 1, height: '80%' }}
++      style={{ flex: 1, height: '100%' }}
+       muted
+       autoPlay
+       // controls
