@@ -7,15 +7,15 @@ export class Room implements RoomType {
   @Field(() => String, { description: 'Room Id' })
   id: string;
 
-  @Field(() => String, { description: 'Room Profile 1 ID' })
-  profile1Id: string;
+  @Field(() => String, { description: 'Caller ID' })
+  callerId: string;
 
-  @Field(() => String, { description: 'Room Profile 2 ID' })
-  profile2Id: string;
+  @Field(() => String, { description: 'Callee ID' })
+  calleeId: string;
 
-  @Field(() => Profile, { description: 'Room Profile 1 ID' })
-  profile1: Profile;
+  @Field(() => Profile, { description: 'Caller' })
+  caller: Profile;
 
-  @Field(() => Profile, { description: 'Room Profile 2 ID' })
-  profile2: Profile;
+  @Field(() => Profile, { description: 'Callee' })
+  callee: Profile;
 }

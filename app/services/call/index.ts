@@ -140,7 +140,6 @@ class Call {
     } else {
       if (this.peerServer) {
         this.peerServer.on('open', (id: string) => {
-          console.log('here', id)
           this.sessionId = id;
           listeningRemoteCall(this.sessionId, this.stream);
           callback(id);

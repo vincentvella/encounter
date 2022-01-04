@@ -31,10 +31,10 @@ export type CreateProfileDto = {
 };
 
 export type CreateRoomInput = {
-  /** Matcher id */
-  profile1Id: Scalars['String'];
-  /** Matchee id */
-  profile2Id: Scalars['String'];
+  /** Callee id */
+  calleeId: Scalars['String'];
+  /** Caller id */
+  callerId: Scalars['String'];
 };
 
 export type CreateUserDto = {
@@ -55,7 +55,7 @@ export type Mutation = {
   createUser: User;
   createUserWaiting: UserWaiting;
   removeProfile: RemoveProfile;
-  removeRoom: Room;
+  removeRoom?: Maybe<Room>;
   removeUserWaiting: UserWaiting;
   updateProfile: Profile;
   updateRoom: Room;
@@ -181,16 +181,16 @@ export type RequestResponse = {
 
 export type Room = {
   __typename?: 'Room';
+  /** Callee */
+  callee: Profile;
+  /** Callee ID */
+  calleeId: Scalars['String'];
+  /** Caller */
+  caller: Profile;
+  /** Caller ID */
+  callerId: Scalars['String'];
   /** Room Id */
   id: Scalars['String'];
-  /** Room Profile 1 ID */
-  profile1: Profile;
-  /** Room Profile 1 ID */
-  profile1Id: Scalars['String'];
-  /** Room Profile 2 ID */
-  profile2: Profile;
-  /** Room Profile 2 ID */
-  profile2Id: Scalars['String'];
 };
 
 export type SignUp = Login | RequestResponse;
@@ -207,11 +207,11 @@ export type UpdateProfileDto = {
 };
 
 export type UpdateRoomInput = {
+  /** Callee id */
+  calleeId?: Maybe<Scalars['String']>;
+  /** Caller id */
+  callerId?: Maybe<Scalars['String']>;
   id: Scalars['Int'];
-  /** Matcher id */
-  profile1Id?: Maybe<Scalars['String']>;
-  /** Matchee id */
-  profile2Id?: Maybe<Scalars['String']>;
 };
 
 export type User = {
@@ -252,7 +252,7 @@ export type DeleteRoomMutationVariables = Exact<{
 }>;
 
 
-export type DeleteRoomMutation = { __typename?: 'Mutation', removeRoom: { __typename?: 'Room', id: string } };
+export type DeleteRoomMutation = { __typename?: 'Mutation', removeRoom?: { __typename?: 'Room', id: string } | null | undefined };
 
 export type EnterRoomQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -283,12 +283,12 @@ export type SignUpQuery = { __typename?: 'Query', signUp?: { __typename?: 'Login
 export type RoomCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RoomCreatedSubscription = { __typename?: 'Subscription', roomCreated?: { __typename?: 'Room', id: string, profile1Id: string, profile2Id: string } | null | undefined };
+export type RoomCreatedSubscription = { __typename?: 'Subscription', roomCreated?: { __typename?: 'Room', id: string, callerId: string, calleeId: string } | null | undefined };
 
 export type RoomForUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RoomForUserQuery = { __typename?: 'Query', findRoomForUser?: { __typename?: 'Room', id: string, profile1Id: string, profile2Id: string } | null | undefined };
+export type RoomForUserQuery = { __typename?: 'Query', findRoomForUser?: { __typename?: 'Room', id: string, callerId: string, calleeId: string } | null | undefined };
 
 export type VerifyCodeQueryVariables = Exact<{
   code: Scalars['String'];
@@ -559,8 +559,8 @@ export const RoomCreatedDocument = gql`
     subscription RoomCreated {
   roomCreated {
     id
-    profile1Id
-    profile2Id
+    callerId
+    calleeId
   }
 }
     `;
@@ -590,8 +590,8 @@ export const RoomForUserDocument = gql`
     query RoomForUser {
   findRoomForUser {
     id
-    profile1Id
-    profile2Id
+    callerId
+    calleeId
   }
 }
     `;

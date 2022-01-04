@@ -16,7 +16,7 @@ import { UserWaitingService } from 'src/user-waiting/user-waiting.service';
 const ROOM_CREATED_EVENT = 'roomCreated';
 
 const roomCreatedForUser = (room: Room, user: User) =>
-  !!(user?.id && (user.id === room.profile1.userId || user.id === room.profile2.userId))
+  !!(user?.id && (user.id === room.caller.userId || user.id === room.callee.userId))
 
 @Resolver(() => Room)
 export class RoomResolver {

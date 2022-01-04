@@ -1,0 +1,1 @@
+export type HasValue<T> = Exclude<T, null | undefined>

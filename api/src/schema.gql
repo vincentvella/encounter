@@ -39,17 +39,17 @@ type Room {
   """Room Id"""
   id: String!
 
-  """Room Profile 1 ID"""
-  profile1Id: String!
+  """Caller ID"""
+  callerId: String!
 
-  """Room Profile 2 ID"""
-  profile2Id: String!
+  """Callee ID"""
+  calleeId: String!
 
-  """Room Profile 1 ID"""
-  profile1: Profile!
+  """Caller"""
+  caller: Profile!
 
-  """Room Profile 2 ID"""
-  profile2: Profile!
+  """Callee"""
+  callee: Profile!
 }
 
 type PendingRoom {
@@ -115,19 +115,19 @@ input UpdateProfileDto {
 }
 
 input CreateRoomInput {
-  """Matcher id"""
-  profile1Id: String!
+  """Caller id"""
+  callerId: String!
 
-  """Matchee id"""
-  profile2Id: String!
+  """Callee id"""
+  calleeId: String!
 }
 
 input UpdateRoomInput {
-  """Matcher id"""
-  profile1Id: String
+  """Caller id"""
+  callerId: String
 
-  """Matchee id"""
-  profile2Id: String
+  """Callee id"""
+  calleeId: String
   id: Int!
 }
 

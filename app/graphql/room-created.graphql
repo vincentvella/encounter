@@ -1,15 +1,15 @@
 subscription RoomCreated {
   roomCreated {
     id
-    profile1Id
-    profile2Id
+    callerId
+    calleeId
   }
 }
 
 query RoomForUser {
   findRoomForUser {
     id
-    profile1Id
-    profile2Id
+    callerId
+    calleeId
   }
 }

@@ -32,8 +32,10 @@ const Call = () => {
         key: `encounter-${route.params.id}-${data.findProfile?.id}`,
       }).then(status => {
         if (status) {
-          Chat.current.getSessionId((id: string) => {
-            globalCall.call(`encounter-${route.params.id}-${route.params.peer}`, {})
+          Chat.current.getSessionId(() => {
+            if (data.findProfile?.id !== route.params.peer) {
+              globalCall.call(`encounter-${route.params.id}-${route.params.peer}`, {})
+            }
           });
         }
       })

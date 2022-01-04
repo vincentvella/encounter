@@ -7,23 +7,23 @@ import { UpdateRoomInput } from './dto/update-room.input';
 export class RoomService {
   constructor(private readonly prisma: PrismaService) { }
 
-  removeUsersFromWaiting(profile1Id: string, profile2Id: string) {
+  removeUsersFromWaiting(callerId: string, calleeId: string) {
     return this.prisma.$transaction([
       // Attempt to delete both users.. if successful - we add them to room
-      this.prisma.userWaiting.delete({ where: { profileId: profile1Id } }),
-      this.prisma.userWaiting.delete({ where: { profileId: profile2Id } })
+      this.prisma.userWaiting.delete({ where: { profileId: callerId } }),
+      this.prisma.userWaiting.delete({ where: { profileId: calleeId } })
     ])
   }
 
   async create(createRoomInput: CreateRoomInput) {
-    const { profile1Id, profile2Id } = createRoomInput
-    await this.removeUsersFromWaiting(profile1Id, profile2Id)
+    const { callerId, calleeId } = createRoomInput
+    await this.removeUsersFromWaiting(callerId, calleeId)
     return this.prisma.room.create({
       data: {
-        profile1Id,
-        profile2Id
+        callerId,
+        calleeId
       },
-      include: { profile1: true, profile2: true }
+      include: { caller: true, callee: true }
     })
   }
 
@@ -35,8 +35,8 @@ export class RoomService {
     return `This action returns a #${id} room`;
   }
 
-  findRoomForUser(profileId: string) {
-    return this.prisma.room.findFirst({ where: { OR: [{ profile1Id: profileId }, { profile2Id: profileId }] } })
+  findRoomForUser(callId: string) {
+    return this.prisma.room.findFirst({ where: { OR: [{ callerId: callId }, { calleeId: callId }] } })
   }
 
   update(id: number, updateRoomInput: UpdateRoomInput) {
@@ -50,7 +50,7 @@ export class RoomService {
    */
   async remove(id: string) {
     try {
-      const deleted = await this.prisma.room.delete({ where: { id: id } })
+      const deleted = await this.prisma.room.delete({ where: { id } })
       return deleted
     } catch (err) {
       return null

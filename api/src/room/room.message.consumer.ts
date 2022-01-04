@@ -28,12 +28,12 @@ export class RoomMessageConsumer {
     @Inject(PUB_SUB) private pubSub: RedisPubSub
   ) { }
 
-  async findMatch(profile1Id: string, queuedUsers: QueuedUserWithData[]) {
+  async findMatch(callerId: string, queuedUsers: QueuedUserWithData[]) {
     for (const queuedUser of queuedUsers) {
       try {
         const room = await this.roomService.create({
-          profile1Id,
-          profile2Id: queuedUser.profileId
+          callerId,
+          calleeId: queuedUser.profileId
         })
         await this.pubSub.publish(ROOM_CREATED_EVENT, { roomCreated: room });
         return room

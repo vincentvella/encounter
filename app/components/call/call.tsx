@@ -1,18 +1,13 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import * as React from 'react';
-import {
-  Image, Modal, StyleSheet, Text,
-  TouchableOpacity, View, Dimensions
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
 import { RTCView } from 'react-native-webrtc-web-shim';
 import CallService from '../../services/call'
 import { CallEvents } from '../../services/call/contains';
+import CallButton from './call-button';
 import Timer from './timer'
 
 const { width, height } = Dimensions.get('window');
-
-
-let interval: any = null;
-const ringtime = 20;
 
 const styles = StyleSheet.create({
   container: {
@@ -30,19 +25,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  btnCall: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 3
-  },
-  icon: {
-    width: 35,
-    height: 35,
-  },
   manageCall: {
     flexDirection: 'row',
     marginVertical: 20,
@@ -53,7 +35,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 3,
     position: 'absolute',
-    zIndex: 999,
+    zIndex: 99999,
     bottom: 140,
     backgroundColor: 'white',
     right: 10,
@@ -65,11 +47,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black'
   },
   iconCamera: {
-    width: 30,
-    height: 30,
     position: 'absolute',
     zIndex: 999,
-    tintColor: 'white',
     right: 10,
     bottom: 10,
   },
@@ -132,8 +111,9 @@ export interface Props {
 
 const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
   const previouslyVisible = React.useRef(false)
+  const intervals = React.useRef<NodeJS.Timer[]>([])
+  const stream = React.useRef(VideoChat.current.getLocalStream())
   const [visible, setVisible] = React.useState(false);
-  const stream = VideoChat.current.getLocalStream();
   const [remoteStream, setRemoteStream] = React.useState<any>(null);
   const [type, setType] = React.useState('');
   const [audioEnable, setAudioEnable] = React.useState(true);
@@ -150,8 +130,10 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
   });
 
   React.useEffect(() => {
+    const ringtime = 20;
 
     VideoChat.current.listenings.getRemoteStream((remoteStream) => {
+      stream.current = VideoChat.current.getLocalStream()
       setRemoteStream(remoteStream);
     });
 
@@ -167,13 +149,13 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
         video(true);
         audio(true);
         let time = ringtime;
-        interval = setInterval(() => {
+        intervals.current.push(setInterval(() => {
           time = time - 1;
           if (time === 0) {
             endCall();
-            clearInterval(interval);
+            intervals.current.forEach(i => clearInterval(i))
           }
-        }, 1000);
+        }, 1000))
 
         if (type === CallEvents.received) {
           VideoChat.current.events.vibration.start();
@@ -182,12 +164,12 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
       }
 
       if (type === CallEvents.accept) {
-        clearInterval(interval);
+        intervals.current.forEach(i => clearInterval(i))
         VideoChat.current.events.vibration.cancel();
       }
 
       if (type === CallEvents.end) {
-        clearInterval(interval);
+        intervals.current.forEach(i => clearInterval(i))
         VideoChat.current.events.vibration.cancel();
         setVisible(false);
         setAudioEnable(true);
@@ -213,6 +195,7 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
   };
 
   const switchCamera = () => {
+    console.log('switching camera...')
     if (cameraType === 'front') {
       setCameraType('end');
       VideoChat.current.events.message({ type: 'SWITCH_CAMERA', value: 'end' });
@@ -231,16 +214,19 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
     VideoChat.current.events.audioEnable(enable);
   };
 
-  const renderIcon = (icon: any, color: string, onPress: () => void) => {
-    return (<View>
-      <TouchableOpacity
-        style={[styles.btnCall, { backgroundColor: color }]}
-        onPress={() => {
-          onPress();
-        }}>
-        <Image style={[styles.icon, { tintColor: color === 'white' ? 'black' : 'white' }]} source={icon} />
-      </TouchableOpacity>
-    </View>)
+  const onPressEnd = () => {
+    setVisible(false)
+    endCall()
+  }
+
+  const toggleAudio = () => {
+    audio(!audioEnable);
+    setAudioEnable(!audioEnable);
+  }
+
+  const toggleVideo = () => {
+    video(!videoEnabled);
+    setVideoEnable(!videoEnabled);
   }
 
   React.useEffect(() => {
@@ -256,73 +242,45 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
   }
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      onRequestClose={() => {
-        setVisible(false);
-      }}>
-      <View style={styles.modalCall}>
-        {(type === CallEvents.start || type === CallEvents.received) && <Timer style={styles.timer} textStyle={styles.textTimer} start />}
-        {type === CallEvents.accept && remoteStream && (
-          <View style={{ flex: 1 }}>
-
-            <RTCView mirror={remoteCameraType === 'front' ? true : false} stream={remoteStream} style={styles.stream} objectFit="cover" />
-            {stream && (
-              <View style={styles.boxMyStream}>
-                <RTCView mirror={cameraType === 'front' ? true : false} stream={stream} style={styles.myStream} objectFit="cover" />
-                {type === CallEvents.accept &&
-                  <Timer
-                    style={styles.timer2}
-                    textStyle={styles.textTimer2} start
-                  />}
-                <TouchableOpacity onPress={() => switchCamera()}>
-                  <Image style={styles.iconCamera} source={require('./icons/camera.png')} />
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        )}
-        {type === CallEvents.start && (
-          <View style={styles.manageCall}>
-            {renderIcon(require('./icons/endcall.png'), 'red', () => {
-              setVisible(false);
-              endCall();
-            })}
-          </View>
-        )}
-        {type === CallEvents.received && (
-          <View style={styles.manageCall}>
-            {renderIcon(require('./icons/call.png'), 'green', () => {
-              acceptCall();
-            })}
-            {renderIcon(require('./icons/endcall.png'), 'red', () => {
-              setVisible(false);
-              endCall();
-            })}
-          </View>
-        )}
-        {type === CallEvents.accept && (
-          <View style={styles.manageCall}>
-            {renderIcon(require('./icons/micro.png'), audioEnable ? 'white' : 'red', () => {
-              audio(!audioEnable);
-              setAudioEnable(!audioEnable);
-            })}
-
-            {renderIcon(require('./icons/video.png'), videoEnabled ? 'white' : 'red', () => {
-              video(!videoEnabled);
-              setVideoEnable(!videoEnabled);
-            })}
-
-            {renderIcon(require('./icons/endcall.png'), 'red', () => {
-              setVisible(false);
-              endCall();
-            })}
-
-          </View>
-        )}
-      </View>
-    </Modal>
+    <View style={styles.modalCall}>
+      {(type === CallEvents.start || type === CallEvents.received) && <Timer style={styles.timer} textStyle={styles.textTimer} start />}
+      {!!(type === CallEvents.accept && remoteStream) && (
+        <View style={{ flex: 1 }} pointerEvents="auto">
+          <RTCView mirror={remoteCameraType === 'front' ? true : false} stream={remoteStream} style={styles.stream} objectFit="cover" />
+          {stream.current && (
+            <View style={styles.boxMyStream}>
+              <RTCView mirror={cameraType === 'front' ? true : false} stream={stream.current} style={styles.myStream} objectFit="cover" />
+              {type === CallEvents.accept &&
+                <Timer
+                  style={styles.timer2}
+                  textStyle={styles.textTimer2} start
+                />}
+              <TouchableOpacity onPress={switchCamera} style={styles.iconCamera} >
+                <MaterialIcons name="switch-camera" color="white" size={30} />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      )}
+      {type === CallEvents.start && (
+        <View style={styles.manageCall}>
+          <CallButton icon='call-end' color="red" onPress={onPressEnd} size={30} />
+        </View>
+      )}
+      {type === CallEvents.received && (
+        <View style={styles.manageCall}>
+          <CallButton icon='call' color="green" onPress={acceptCall} size={30} />
+          <CallButton icon='call-end' color="red" onPress={onPressEnd} size={30} />
+        </View>
+      )}
+      {type === CallEvents.accept && (
+        <View style={styles.manageCall}>
+          <CallButton icon='mic' color={audioEnable ? 'white' : 'red'} onPress={toggleAudio} size={30} />
+          <CallButton icon={videoEnabled ? 'videocam' : 'videocam-off'} color={videoEnabled ? 'white' : 'red'} onPress={toggleVideo} size={30} />
+          <CallButton icon='call-end' color="red" onPress={onPressEnd} size={30} />
+        </View>
+      )}
+    </View>
   );
 });
 

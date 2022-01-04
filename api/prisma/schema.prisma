@@ -38,8 +38,8 @@ model Profile {
   userId         String          @unique
   SearchCriteria SearchCriteria?
   UserWaiting    UserWaiting?
-  RoomAsUser1    Room?           @relation("profile1")
-  RoomAsUser2    Room?           @relation("profile2")
+  RoomAsCaller   Room?           @relation("caller")
+  RoomAsCallee   Room?           @relation("callee")
 }
 
 model SearchCriteria {
@@ -62,11 +62,11 @@ model Location {
 }
 
 model Room {
-  id         String  @id @default(uuid())
-  profile1   Profile @relation("profile1", fields: [profile1Id], references: [id])
-  profile2   Profile @relation("profile2", fields: [profile2Id], references: [id])
-  profile1Id String  @unique
-  profile2Id String  @unique
+  id       String  @id @default(uuid())
+  caller   Profile @relation("caller", fields: [callerId], references: [id])
+  callee   Profile @relation("callee", fields: [calleeId], references: [id])
+  callerId String  @unique
+  calleeId String  @unique
 }
 
 model UserWaiting {

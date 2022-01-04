@@ -1,14 +1,16 @@
+import { SubscriptionResult } from '@apollo/client';
 import { useNavigation } from '@react-navigation/core';
 import * as React from 'react'
 import { StyleSheet, Text } from 'react-native';
 import { View } from 'react-native';
 import { useSetRecoilState } from 'recoil';
 import PrimaryButton from '../../components/button/primary';
-import { useEnterRoomLazyQuery, useProfileQuery, useRoomCreatedSubscription, useRoomForUserQuery } from '../../generated/types';
-import { AuthenticatedRootNavigationProp } from '../../services/navigation/types';
+import { Room, RoomCreatedSubscription, useEnterRoomLazyQuery, useProfileQuery, useRoomCreatedSubscription, useRoomForUserQuery } from '../../generated/types';
+import { AuthenticatedRootNavigationProp, AuthenticatedStackParams } from '../../services/navigation/types';
 import { getRandomQuote } from '../../services/quotes';
 import { useTheme } from '../../services/theme';
 import { isOnboarding, isSignedIn } from '../../states/authentication';
+import { HasValue } from '../../types/utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,6 +31,17 @@ const styles = StyleSheet.create({
     marginVertical: 8
   }
 })
+
+const getParams = (
+  room: Room | HasValue<HasValue<SubscriptionResult<RoomCreatedSubscription, any>['data']>['roomCreated']>,
+  profileId?: string
+): AuthenticatedStackParams['call'] => {
+  const { id, callerId, calleeId } = room
+  if (profileId) {
+    return { id, peer: profileId === callerId ? callerId : calleeId }
+  }
+  return { id, peer: 'unknown' }
+}
 
 const Home = () => {
   const { colors } = useTheme()
@@ -70,9 +83,9 @@ const Home = () => {
         stopPolling()
         navigation.push('call', {
           id: subscriptionData.data.roomCreated.id,
-          peer: peerId === subscriptionData.data.roomCreated.profile1Id
-            ? subscriptionData.data.roomCreated.profile2Id
-            : subscriptionData.data.roomCreated.profile1Id
+          peer: peerId === subscriptionData.data.roomCreated.calleeId
+            ? subscriptionData.data.roomCreated.callerId
+            : subscriptionData.data.roomCreated.calleeId
         })
       }
     }
@@ -86,9 +99,9 @@ const Home = () => {
       stopPolling()
       navigation.push('call', {
         id: roomData.findRoomForUser.id,
-        peer: peerId === roomData.findRoomForUser.profile1Id
-          ? roomData.findRoomForUser.profile2Id
-          : roomData.findRoomForUser.profile1Id
+        peer: peerId === roomData.findRoomForUser.calleeId
+          ? roomData.findRoomForUser.callerId
+          : roomData.findRoomForUser.calleeId
       })
     }
   }, [roomData, stopPolling])
