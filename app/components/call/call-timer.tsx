@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
   },
   text: {
     padding: 4,
+    color: 'rgb(229, 229, 231)'
   }
 })
 
@@ -45,7 +46,6 @@ export const globalTimer = {
 export type CallTimer = TimerHandlers & CallTimerProps
 
 const CallTimer = React.forwardRef<TimerHandlers, CallTimerProps>(({ callLength, endCall }, ref) => {
-  const { colors } = useTheme()
   const [endTime, setEndTime] = React.useState<Date>()
   const [remainingTime, setRemainingTime] = React.useState(callLength * 60)
   React.useImperativeHandle(ref, () => ({
@@ -76,7 +76,7 @@ const CallTimer = React.forwardRef<TimerHandlers, CallTimerProps>(({ callLength,
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.text, { color: colors.text }]}>{`${Math.max(Math.floor(remainingTime / 60), 0)}:${getSecondsString(remainingTime % 60)}`}</Text>
+      <Text style={styles.text}>{`${Math.max(Math.floor(remainingTime / 60), 0)}:${getSecondsString(remainingTime % 60)}`}</Text>
     </View>
   )
 })
