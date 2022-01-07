@@ -81,7 +81,7 @@ class WebSocketLink extends ApolloLink {
 }
 
 const ws = new WebSocketLink({
-  url: 'ws://encounter-dev.loca.lt/graphql',
+  url: 'ws://encounter-dev-1.loca.lt/graphql',
   connectionParams: () => {
     const token = Cookie.get('jwt')
     return {

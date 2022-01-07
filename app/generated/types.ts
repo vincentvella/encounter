@@ -148,7 +148,7 @@ export type QueryLoginArgs = {
 
 
 export type QueryRoomArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 
@@ -258,6 +258,13 @@ export type EnterRoomQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type EnterRoomQuery = { __typename?: 'Query', waitForRoom: { __typename?: 'PendingRoom', waiting: boolean } };
+
+export type FindRoomQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type FindRoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: string, callerId: string, calleeId: string } };
 
 export type LoginQueryVariables = Exact<{
   number: Scalars['String'];
@@ -439,6 +446,43 @@ export function useEnterRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type EnterRoomQueryHookResult = ReturnType<typeof useEnterRoomQuery>;
 export type EnterRoomLazyQueryHookResult = ReturnType<typeof useEnterRoomLazyQuery>;
 export type EnterRoomQueryResult = Apollo.QueryResult<EnterRoomQuery, EnterRoomQueryVariables>;
+export const FindRoomDocument = gql`
+    query FindRoom($id: String!) {
+  room(id: $id) {
+    id
+    callerId
+    calleeId
+  }
+}
+    `;
+
+/**
+ * __useFindRoomQuery__
+ *
+ * To run a query within a React component, call `useFindRoomQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindRoomQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFindRoomQuery(baseOptions: Apollo.QueryHookOptions<FindRoomQuery, FindRoomQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindRoomQuery, FindRoomQueryVariables>(FindRoomDocument, options);
+      }
+export function useFindRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindRoomQuery, FindRoomQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindRoomQuery, FindRoomQueryVariables>(FindRoomDocument, options);
+        }
+export type FindRoomQueryHookResult = ReturnType<typeof useFindRoomQuery>;
+export type FindRoomLazyQueryHookResult = ReturnType<typeof useFindRoomLazyQuery>;
+export type FindRoomQueryResult = Apollo.QueryResult<FindRoomQuery, FindRoomQueryVariables>;
 export const LoginDocument = gql`
     query Login($number: String!, $password: String!) {
   login(number: $number, password: $password) {

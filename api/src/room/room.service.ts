@@ -31,8 +31,8 @@ export class RoomService {
     return `This action returns all room`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} room`;
+  findOne(id: string) {
+    return this.prisma.room.findUnique({ where: { id } })
   }
 
   findRoomForUser(callId: string) {

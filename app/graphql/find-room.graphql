@@ -1,0 +1,7 @@
+query FindRoom($id: String!) {
+  room(id: $id) {
+    id
+    callerId
+    calleeId
+  }
+}

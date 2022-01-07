@@ -73,7 +73,7 @@ type Query {
   findProfile: Profile
   waitForRoom: PendingRoom!
   findRoomForUser: Room
-  room(id: Int!): Room!
+  room(id: String!): Room!
   userWaiting(id: Int!): UserWaiting!
 }
 

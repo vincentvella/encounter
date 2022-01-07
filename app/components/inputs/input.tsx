@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { StyleSheet, Text, TextInput, TextInputProps, TextStyle, View } from "react-native"
+import { StyleSheet, Text, TextInput, TextInputProps } from "react-native"
 import { useTheme } from '../../services/theme'
 
 const styles = StyleSheet.create({

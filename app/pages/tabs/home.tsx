@@ -55,7 +55,7 @@ const Home = () => {
   })
 
   const navigation = useNavigation<AuthenticatedRootNavigationProp>()
-  const { data: roomData, loading: roomDataLoading, error, startPolling, stopPolling } = useRoomForUserQuery()
+  const { data: roomData, startPolling, stopPolling } = useRoomForUserQuery()
   const [enterRoom, { loading, data }] = useEnterRoomLazyQuery({
     onCompleted: () => {
       startPolling(5000)

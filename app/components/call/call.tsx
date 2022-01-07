@@ -5,6 +5,7 @@ import { RTCView } from 'react-native-webrtc-web-shim';
 import CallService from '../../services/call'
 import { CallEvents } from '../../services/call/contains';
 import CallButton from './call-button';
+import CallTimer, { globalTimer, globalTimerRef } from './call-timer';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   boxMyStream: {
-    maxWidth: 200,
+    maxWidth: 150,
     position: 'absolute',
     shadowColor: "#000",
     shadowOffset: {
@@ -32,19 +33,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    zIndex: 99999,
     bottom: 140,
     right: 10,
   },
   myStream: {
     width: 150,
     height: 180,
-    borderRadius: 10,
     backgroundColor: 'black'
   },
   iconCamera: {
     position: 'absolute',
-    zIndex: 999,
+    zIndex: 16,
     right: 10,
     bottom: 10,
   },
@@ -68,11 +67,12 @@ export const globalCall = {
 export interface Props {
   VideoChat: React.MutableRefObject<CallService>
   onEnd: () => void
+  isCallee: boolean | null
+  callLength?: number
 }
 
-const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
+const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd, isCallee, callLength = 1 }, ref) => {
   const previouslyVisible = React.useRef(false)
-  const intervals = React.useRef<NodeJS.Timer[]>([])
   const stream = React.useRef(VideoChat.current.getLocalStream())
   const [visible, setVisible] = React.useState(false);
   const [remoteStream, setRemoteStream] = React.useState<any>(null);
@@ -108,19 +108,13 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
       if (type === CallEvents.received || type === CallEvents.start) {
         video(true);
         audio(true);
-
         if (type === CallEvents.received) {
           VideoChat.current.events.acceptCall();
         }
         setVisible(true);
       }
 
-      if (type === CallEvents.accept) {
-        intervals.current.forEach(i => clearInterval(i))
-      }
-
       if (type === CallEvents.end) {
-        intervals.current.forEach(i => clearInterval(i))
         setVisible(false);
         setAudioEnable(true);
         setVideoEnable(true);
@@ -130,23 +124,34 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
         if (userData?.message?.type === 'SWITCH_CAMERA') {
           setRemoteCameraType(userData?.message?.value);
         }
+        if (userData?.message?.type === 'SET_END_TIMESTAMP') {
+          console.log(userData)
+          if (typeof userData?.message?.value?.endsAt === 'string') {
+            globalTimer.startTimer(userData.message.value.endsAt)
+          }
+        }
       }
     });
     return () => { mounted = false }
-  }, []);
-
-
-
-  const acceptCall = () => {
-    VideoChat.current.events.acceptCall();
-  };
+  }, [isCallee]);
 
   const endCall = () => {
     VideoChat.current.events.endCall();
   };
 
+  React.useEffect(() => {
+    if (globalTimerRef.current) {
+      if (type === CallEvents.accept && isCallee !== null && isCallee) {
+        console.log('heh')
+        let endsAt = new Date()
+        endsAt = new Date(endsAt.getTime() + (1000 * 60 * callLength));
+        VideoChat.current.events.message({ type: 'SET_END_TIMESTAMP', value: { endsAt } });
+        globalTimer.startTimer(endsAt.toISOString())
+      }
+    }
+  }, [globalTimerRef.current, type, isCallee, callLength])
+
   const switchCamera = () => {
-    console.log('switching camera...')
     if (cameraType === 'front') {
       setCameraType('end');
       VideoChat.current.events.message({ type: 'SWITCH_CAMERA', value: 'end' });
@@ -200,10 +205,18 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd }, ref) => {
           <RTCView mirror={remoteCameraType === 'front' ? true : false} stream={remoteStream} style={styles.stream} objectFit="cover" />
           {stream.current && (
             <View style={styles.boxMyStream}>
-              <RTCView mirror={cameraType === 'front' ? true : false} stream={stream.current} style={styles.myStream} objectFit="cover" />
-              <TouchableOpacity onPress={switchCamera} style={styles.iconCamera} >
-                <MaterialIcons name="switch-camera" color="white" size={30} />
-              </TouchableOpacity>
+              <View>
+                <RTCView
+                  mirror={cameraType === 'front' ? true : false}
+                  stream={stream.current}
+                  style={styles.myStream}
+                  objectFit="cover"
+                />
+                <TouchableOpacity onPress={switchCamera} style={styles.iconCamera} >
+                  <MaterialIcons name="switch-camera" color="white" size={30} />
+                </TouchableOpacity>
+              </View>
+              <CallTimer ref={globalTimerRef} callLength={callLength} endCall={onPressEnd} />
             </View>
           )}
         </View>
