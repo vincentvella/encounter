@@ -15,6 +15,9 @@ target 'Encounter' do
     :path => config["reactNativePath"],
     :hermes_enabled => podfile_properties['expo.jsEngine'] == 'hermes'
   )
+# @generated begin flipper - expo prebuild (DO NOT MODIFY) sync-c6ae33a55a41cfeffb611419b8ec826ca69664b9
+  use_flipper!({'Flipper' => '0.127.0', 'Flipper-Folly' => '2.6.10', 'Flipper-RSocket' => '1.4.3', 'Flipper-DoubleConversion' => '3.1.7', 'Flipper-Glog' => '0.3.9', 'Flipper-PeerTalk' => '0.0.4'})
+# @generated end flipper
   # Uncomment to opt-in to using Flipper
   #
   # if !ENV['CI']

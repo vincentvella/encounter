@@ -5,6 +5,7 @@ export type AuthenticatedStackParams = {
   tabs: undefined
   SignUpProfile: undefined
   call: { id: string, peer: string }
+  feedback: { id: string }
 }
 
 export type UnauthenticatedStackParams = {

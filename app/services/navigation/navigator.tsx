@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { LinkingOptions, NavigationContainer } from '@react-navigation/native';
+import { LinkingOptions, NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { useColorScheme } from 'react-native';
+import { useFlipper } from '@react-navigation/devtools';
+import { Text, useColorScheme } from 'react-native';
 import Call from '../../pages/call';
 import Landing from '../../pages/landing';
 import ColorTheme from '../theme/color';
@@ -14,9 +15,11 @@ import { isOnboarding, isSignedIn } from '../../states/authentication';
 import Cookie from '../storage/cookie';
 import Tabs from '../../pages/tabs';
 import SignIn from '../../pages/onboarding/sign-in';
+import Feedback from '../../pages/feedback';
 
 const prefixes = [
-  'http://localhost:19006'
+  'http://localhost:19006',
+  'encounter://'
 ]
 
 const linking: LinkingOptions<ReactNavigation.RootParamList> = {
@@ -39,18 +42,29 @@ export default function Navigator() {
   const scheme = useColorScheme()
   const signedIn = useRecoilValue(isSignedIn)
   const onboarding = useRecoilValue(isOnboarding)
+  const navigationRef = useNavigationContainerRef()
+
+  useFlipper(navigationRef)
 
   React.useEffect(() => {
     if (!signedIn) {
       Cookie.remove('jwt')
     }
   }, [signedIn])
+
   return (
-    <NavigationContainer theme={scheme === 'dark' ? ColorTheme.dark : ColorTheme.light} linking={linking}>
+    <NavigationContainer
+      ref={navigationRef}
+      initialState={{ routes: [] }}
+      fallback={<Text>Loading...</Text>}
+      theme={scheme === 'dark' ? ColorTheme.dark : ColorTheme.light}
+      linking={linking}
+    >
       {!!(signedIn && !onboarding) && (
         <Stack.Navigator>
           <Stack.Screen name="tabs" component={Tabs} options={{ headerShown: false }} />
           <Stack.Screen name="call" component={Call} options={{ presentation: 'fullScreenModal', headerShown: false }} />
+          <Stack.Screen name="feedback" component={Feedback} options={{ presentation: 'fullScreenModal', headerTitle: 'Feedback' }} />
         </Stack.Navigator>
       )}
       {!signedIn && (
