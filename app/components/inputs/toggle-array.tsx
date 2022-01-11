@@ -3,7 +3,7 @@ import * as React from 'react'
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native"
 import { useTheme } from '../../services/theme'
 
-type InputHandlers = {
+export type ToggleArrayHandlers = {
   getValue: () => Record<string, boolean>
 }
 
@@ -11,7 +11,7 @@ type Props = {
   values: { message: string, name: string }[]
 }
 
-export type RatingSelectorProps = InputHandlers
+export type RatingSelectorProps = ToggleArrayHandlers
 
 const styles = StyleSheet.create({
   container: {

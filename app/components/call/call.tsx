@@ -125,7 +125,6 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd, isCallee, cal
           setRemoteCameraType(userData?.message?.value);
         }
         if (userData?.message?.type === 'SET_END_TIMESTAMP') {
-          console.log(userData)
           if (typeof userData?.message?.value?.endsAt === 'string') {
             globalTimer.startTimer(userData.message.value.endsAt)
           }
@@ -142,7 +141,6 @@ const Call = React.forwardRef<unknown, Props>(({ VideoChat, onEnd, isCallee, cal
   React.useEffect(() => {
     if (globalTimerRef.current) {
       if (type === CallEvents.accept && isCallee !== null && isCallee) {
-        console.log('heh')
         let endsAt = new Date()
         endsAt = new Date(endsAt.getTime() + (1000 * 60 * callLength));
         VideoChat.current.events.message({ type: 'SET_END_TIMESTAMP', value: { endsAt } });

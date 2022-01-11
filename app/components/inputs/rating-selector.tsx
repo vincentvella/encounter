@@ -3,7 +3,7 @@ import * as React from 'react'
 import { StyleSheet, TouchableOpacity, View } from "react-native"
 import { useTheme } from '../../services/theme'
 
-type InputHandlers = {
+export type RatingSelectorHandlers = {
   getValue: () => number
 }
 
@@ -11,7 +11,7 @@ type Props = {
   stars: number
 }
 
-export type RatingSelectorProps = InputHandlers
+export type RatingSelectorProps = RatingSelectorHandlers
 
 const styles = StyleSheet.create({
   container: {
@@ -70,7 +70,6 @@ const Stars: React.FC<Stars> = ({ stars, color, setter, rating }) => {
 
 export const RatingSelector = React.forwardRef<RatingSelectorProps, Props>(({ stars }, ref) => {
   const [rating, setRating] = React.useState(0)
-  console.log({ rating })
   const { colors } = useTheme()
 
   React.useImperativeHandle(ref, () => ({

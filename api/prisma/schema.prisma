@@ -40,6 +40,10 @@ model Profile {
   UserWaiting    UserWaiting?
   RoomAsCaller   Room?           @relation("caller")
   RoomAsCallee   Room?           @relation("callee")
+  EncounterP1    Encounter[]     @relation("profile1")
+  EncounterP2    Encounter[]     @relation("profile2")
+  Rater          UserFeedback[]  @relation("rater")
+  Rated          UserFeedback[]  @relation("rated")
 }
 
 model SearchCriteria {
@@ -62,11 +66,14 @@ model Location {
 }
 
 model Room {
-  id       String  @id @default(uuid())
-  caller   Profile @relation("caller", fields: [callerId], references: [id])
-  callee   Profile @relation("callee", fields: [calleeId], references: [id])
-  callerId String  @unique
-  calleeId String  @unique
+  id        String     @id @default(uuid())
+  caller    Profile    @relation("caller", fields: [callerId], references: [id])
+  callee    Profile    @relation("callee", fields: [calleeId], references: [id])
+  callerId  String     @unique
+  calleeId  String     @unique
+  ended     DateTime
+  Feedback  Feedback[]
+  Encounter Encounter?
 }
 
 model UserWaiting {
@@ -74,4 +81,30 @@ model UserWaiting {
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId String   @unique
   queuedAt  DateTime @default(now())
+}
+
+model Encounter {
+  id         String   @id @default(uuid())
+  room       Room     @relation(fields: [id], references: [id])
+  profile1   Profile  @relation("profile1", fields: [profile1Id], references: [id])
+  profile2   Profile  @relation("profile2", fields: [profile2Id], references: [id])
+  profile1Id String   @unique
+  profile2Id String   @unique
+  met        DateTime
+}
+
+model Feedback {
+  id                String  @id @default(uuid())
+  room              Room    @relation(fields: [id], references: [id])
+  callQuality       Float   @default(0)
+  connectionSecured Boolean @default(false)
+}
+
+model UserFeedback {
+  id          Int     @id @default(autoincrement())
+  userQuality Float   @default(0)
+  rater       Profile @relation("rater", fields: [raterId], references: [id])
+  rated       Profile @relation("rated", fields: [ratedId], references: [id])
+  raterId     String  @unique
+  ratedId     String  @unique
 }
