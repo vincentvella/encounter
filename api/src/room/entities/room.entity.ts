@@ -18,4 +18,7 @@ export class Room implements RoomType {
 
   @Field(() => Profile, { description: 'Callee' })
   callee: Profile;
+
+  @Field(() => Date, { nullable: true, description: 'When call ended' })
+  ended: Date
 }

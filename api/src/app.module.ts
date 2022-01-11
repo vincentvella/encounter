@@ -12,6 +12,8 @@ import { RolesGuard } from './authorization/roles.guard';
 import { RoomModule } from './room/room.module';
 import { BullModule } from '@nestjs/bull';
 import { UserWaitingModule } from './user-waiting/user-waiting.module';
+import { FeedbackModule } from './feedback/feedback.module';
+import { EncounterModule } from './encounter/encounter.module';
 
 
 @Module({
@@ -51,6 +53,8 @@ import { UserWaitingModule } from './user-waiting/user-waiting.module';
     ProfileModule,
     RoomModule,
     UserWaitingModule,
+    FeedbackModule,
+    EncounterModule,
   ],
   providers: [
     {

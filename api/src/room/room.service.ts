@@ -27,6 +27,10 @@ export class RoomService {
     })
   }
 
+  endCall(id: string) {
+    return this.prisma.room.update({ where: { id }, data: { ended: new Date() } })
+  }
+
   findAll() {
     return `This action returns all room`;
   }
@@ -36,7 +40,12 @@ export class RoomService {
   }
 
   findRoomForUser(callId: string) {
-    return this.prisma.room.findFirst({ where: { OR: [{ callerId: callId }, { calleeId: callId }] } })
+    return this.prisma.room.findFirst({
+      where: {
+        OR: [{ callerId: callId }, { calleeId: callId }],
+        AND: [{ ended: { equals: null } }]
+      }
+    })
   }
 
   update(id: number, updateRoomInput: UpdateRoomInput) {

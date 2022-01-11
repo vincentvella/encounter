@@ -1,9 +1,10 @@
 import { useNavigation } from '@react-navigation/native'
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import PrimaryButton from '../components/button/primary'
 import { ContinuationToggle } from '../components/inputs/continuation-toggle'
-import { RatingSelector } from '../components/inputs/rating-selector'
-import { ToggleArray } from '../components/inputs/toggle-array'
+import { RatingSelector, RatingSelectorHandlers } from '../components/inputs/rating-selector'
+import { ToggleArray, ToggleArrayHandlers } from '../components/inputs/toggle-array'
 import { AuthenticatedRootNavigationProp } from '../services/navigation/types'
 import { useTheme } from '../services/theme'
 
@@ -24,6 +25,9 @@ const styles = StyleSheet.create({
 })
 
 const Feedback = () => {
+  const toggleArrayRef = React.useRef<ToggleArrayHandlers>(null)
+  const peerRef = React.useRef<RatingSelectorHandlers>(null)
+  const callQualityRef = React.useRef<RatingSelectorHandlers>(null)
   const [continuation, setContinuation] = React.useState(false)
   const navigation = useNavigation<AuthenticatedRootNavigationProp>()
   const { colors } = useTheme()
@@ -31,6 +35,15 @@ const Feedback = () => {
   const afterSubmit = () => {
     if (navigation.canGoBack()) {
       navigation.popToTop()
+    }
+  }
+
+  const onSubmit = () => {
+    const variables = {
+      continuation,
+      sharedInfo: toggleArrayRef.current?.getValue(),
+      peerRating: peerRef.current?.getValue(),
+      callQuality: callQualityRef.current?.getValue()
     }
   }
 
@@ -49,6 +62,7 @@ const Feedback = () => {
             We will share this information with the person you just met
           </Text>
           <ToggleArray
+            ref={toggleArrayRef}
             values={[
               { message: 'Name', name: 'name' },
               { message: 'Email', name: 'email' },
@@ -61,14 +75,15 @@ const Feedback = () => {
         Rate the person you met
       </Text>
       <View style={styles.starRow}>
-        <RatingSelector stars={5} />
+        <RatingSelector ref={peerRef} stars={5} />
       </View>
       <Text style={[styles.title, { color: colors.text, alignSelf: 'center', paddingTop: 24 }]}>
         Rate the call quality
       </Text>
       <View style={styles.starRow}>
-        <RatingSelector stars={5} />
+        <RatingSelector ref={callQualityRef} stars={5} />
       </View>
+      <PrimaryButton title='Submit' color={colors.primary} onPress={onSubmit} />
     </View>
   )
 }

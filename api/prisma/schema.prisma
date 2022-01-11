@@ -71,7 +71,7 @@ model Room {
   callee    Profile    @relation("callee", fields: [calleeId], references: [id])
   callerId  String     @unique
   calleeId  String     @unique
-  ended     DateTime
+  ended     DateTime?
   Feedback  Feedback[]
   Encounter Encounter?
 }

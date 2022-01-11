@@ -50,7 +50,15 @@ type Room {
 
   """Callee"""
   callee: Profile!
+
+  """When call ended"""
+  ended: DateTime
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type PendingRoom {
   waiting: Boolean!
@@ -64,6 +72,16 @@ type UserWaiting {
   queuedAt: String!
 }
 
+type Feedback {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Encounter {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   findUser(number: String!): User
   login(password: String!, number: String!): Login!
@@ -75,6 +93,8 @@ type Query {
   findRoomForUser: Room
   room(id: String!): Room!
   userWaiting(id: Int!): UserWaiting!
+  feedback(id: Int!): Feedback!
+  encounter(id: Int!): Encounter!
 }
 
 union SignUp = RequestResponse | Login
@@ -94,6 +114,12 @@ type Mutation {
   removeRoom(id: String!): Room
   createUserWaiting(ProfileId: String!): UserWaiting!
   removeUserWaiting(id: Int!): UserWaiting!
+  createFeedback(createFeedbackInput: CreateFeedbackInput!): Feedback!
+  updateFeedback(updateFeedbackInput: UpdateFeedbackInput!): Feedback!
+  removeFeedback(id: Int!): Feedback!
+  createEncounter(createEncounterInput: CreateEncounterInput!): Encounter!
+  updateEncounter(updateEncounterInput: UpdateEncounterInput!): Encounter!
+  removeEncounter(id: Int!): Encounter!
 }
 
 input CreateUserDTO {
@@ -128,6 +154,28 @@ input UpdateRoomInput {
 
   """Callee id"""
   calleeId: String
+  id: Int!
+}
+
+input CreateFeedbackInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateFeedbackInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateEncounterInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateEncounterInput {
+  """Example field (placeholder)"""
+  exampleField: Int
   id: Int!
 }
 
