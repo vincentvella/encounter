@@ -1,11 +1,13 @@
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import * as React from 'react'
+import * as Yup from 'yup'
 import { StyleSheet, Text, View } from 'react-native'
 import PrimaryButton from '../components/button/primary'
 import { ContinuationToggle } from '../components/inputs/continuation-toggle'
 import { RatingSelector, RatingSelectorHandlers } from '../components/inputs/rating-selector'
 import { ToggleArray, ToggleArrayHandlers } from '../components/inputs/toggle-array'
-import { AuthenticatedRootNavigationProp } from '../services/navigation/types'
+import { CreateFeedbackInput, useCreateFeedbackMutation } from '../generated/types'
+import { AuthenticatedRootNavigationProp, AuthenticatedRootRouteProp } from '../services/navigation/types'
 import { useTheme } from '../services/theme'
 
 const styles = StyleSheet.create({
@@ -24,13 +26,24 @@ const styles = StyleSheet.create({
   }
 })
 
+const sharedAttributesValidation = Yup.object({
+  firstName: Yup.bool().required(),
+  lastName: Yup.bool().required(),
+  email: Yup.bool().required(),
+  phoneNumber: Yup.bool().required()
+}).required()
+
 const Feedback = () => {
   const toggleArrayRef = React.useRef<ToggleArrayHandlers>(null)
   const peerRef = React.useRef<RatingSelectorHandlers>(null)
   const callQualityRef = React.useRef<RatingSelectorHandlers>(null)
   const [continuation, setContinuation] = React.useState(false)
   const navigation = useNavigation<AuthenticatedRootNavigationProp>()
+  const route = useRoute<AuthenticatedRootRouteProp<'feedback'>>()
   const { colors } = useTheme()
+  const [createFeedback, { loading }] = useCreateFeedbackMutation({
+    onCompleted: (_) => afterSubmit()
+  })
 
   const afterSubmit = () => {
     if (navigation.canGoBack()) {
@@ -38,12 +51,19 @@ const Feedback = () => {
     }
   }
 
-  const onSubmit = () => {
-    const variables = {
-      continuation,
-      sharedInfo: toggleArrayRef.current?.getValue(),
-      peerRating: peerRef.current?.getValue(),
-      callQuality: callQualityRef.current?.getValue()
+  const onSubmit = async () => {
+    try {
+      const sharedAttributes = await sharedAttributesValidation.validate(toggleArrayRef.current?.getValue())
+      const createFeedbackInput: CreateFeedbackInput = {
+        roomId: route.params.id,
+        continuation,
+        sharedAttributes,
+        peerRating: peerRef.current?.getValue(),
+        callQuality: callQualityRef.current?.getValue()
+      }
+      createFeedback({ variables: { createFeedbackInput } })
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -64,7 +84,8 @@ const Feedback = () => {
           <ToggleArray
             ref={toggleArrayRef}
             values={[
-              { message: 'Name', name: 'name' },
+              { message: 'First Name', name: 'firstName' },
+              { message: 'Last Name', name: 'lastName' },
               { message: 'Email', name: 'email' },
               { message: 'Phone Number', name: 'phoneNumber' }
             ]}
@@ -83,7 +104,7 @@ const Feedback = () => {
       <View style={styles.starRow}>
         <RatingSelector ref={callQualityRef} stars={5} />
       </View>
-      <PrimaryButton title='Submit' color={colors.primary} onPress={onSubmit} />
+      <PrimaryButton loading={loading} title='Submit' color={colors.primary} onPress={onSubmit} />
     </View>
   )
 }

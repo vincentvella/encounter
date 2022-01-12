@@ -1,0 +1,5 @@
+mutation LeaveRoom($id: String!) {
+  leaveRoom(id: $id) {
+    id 
+  }
+}

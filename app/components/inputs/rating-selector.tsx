@@ -61,7 +61,7 @@ const Stars: React.FC<Stars> = ({ stars, color, setter, rating }) => {
   for (let star = 1; star <= stars; star++) {
     const setLeft = () => setter(star - .5)
     const setRight = () => setter(star)
-    starComponents.push(<StarPicker star={star} rating={rating} color={color} selectLeft={setLeft} selectRight={setRight} />)
+    starComponents.push(<StarPicker key={star} star={star} rating={rating} color={color} selectLeft={setLeft} selectRight={setRight} />)
   }
   return (
     <>{starComponents}</>

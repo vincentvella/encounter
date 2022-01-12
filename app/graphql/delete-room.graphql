@@ -1,5 +1,0 @@
-mutation DeleteRoom($id: String!) {
-  removeRoom(id: $id) {
-    id 
-  }
-}

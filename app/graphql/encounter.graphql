@@ -1,0 +1,9 @@
+query Encounters {
+  findAllEncounters {
+    id 
+    firstName
+    lastName
+    email
+    phoneNumber    
+  }
+}

@@ -12,6 +12,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: any;
 };
 
 export type CheckResponse = {
@@ -22,6 +24,24 @@ export type CheckResponse = {
   price: Scalars['String'];
   request_id: Scalars['String'];
   status: Scalars['String'];
+};
+
+export type CreateEncounterInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
+};
+
+export type CreateFeedbackInput = {
+  /** Call Quality */
+  callQuality?: Maybe<Scalars['Float']>;
+  /** Whether someone wants to continue the encounter */
+  continuation: Scalars['Boolean'];
+  /** Peer Rating */
+  peerRating?: Maybe<Scalars['Float']>;
+  /** Room ID */
+  roomId: Scalars['String'];
+  /** Shared Attributes */
+  sharedAttributes: SharedAttributeInput;
 };
 
 export type CreateProfileDto = {
@@ -43,6 +63,21 @@ export type CreateUserDto = {
   phoneNumber?: Maybe<Scalars['String']>;
 };
 
+export type Encounter = {
+  __typename?: 'Encounter';
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  phoneNumber?: Maybe<Scalars['String']>;
+};
+
+export type Feedback = {
+  __typename?: 'Feedback';
+  /** Encounter ID */
+  id: Scalars['String'];
+};
+
 export type Login = {
   __typename?: 'Login';
   access_token?: Maybe<Scalars['String']>;
@@ -50,15 +85,32 @@ export type Login = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createEncounter: Encounter;
+  createFeedback: Feedback;
   createProfile: Profile;
   createRoom: Room;
   createUser: User;
   createUserWaiting: UserWaiting;
+  leaveRoom: Room;
+  removeEncounter: Encounter;
+  removeFeedback: Feedback;
   removeProfile: RemoveProfile;
   removeRoom?: Maybe<Room>;
   removeUserWaiting: UserWaiting;
+  updateEncounter: Encounter;
+  updateFeedback: Feedback;
   updateProfile: Profile;
   updateRoom: Room;
+};
+
+
+export type MutationCreateEncounterArgs = {
+  createEncounterInput: CreateEncounterInput;
+};
+
+
+export type MutationCreateFeedbackArgs = {
+  createFeedbackInput: CreateFeedbackInput;
 };
 
 
@@ -82,6 +134,21 @@ export type MutationCreateUserWaitingArgs = {
 };
 
 
+export type MutationLeaveRoomArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationRemoveEncounterArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRemoveFeedbackArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationRemoveProfileArgs = {
   id: Scalars['String'];
 };
@@ -94,6 +161,16 @@ export type MutationRemoveRoomArgs = {
 
 export type MutationRemoveUserWaitingArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationUpdateEncounterArgs = {
+  updateEncounterInput: UpdateEncounterInput;
+};
+
+
+export type MutationUpdateFeedbackArgs = {
+  updateFeedbackInput: UpdateFeedbackInput;
 };
 
 
@@ -123,6 +200,9 @@ export type Profile = {
 
 export type Query = {
   __typename?: 'Query';
+  encounter: Encounter;
+  feedback: Feedback;
+  findAllEncounters: Array<Encounter>;
   findAllProfiles: Array<Profile>;
   findProfile?: Maybe<Profile>;
   findRoomForUser?: Maybe<Room>;
@@ -133,6 +213,16 @@ export type Query = {
   userWaiting: UserWaiting;
   verifyCode?: Maybe<CheckResponse>;
   waitForRoom: PendingRoom;
+};
+
+
+export type QueryEncounterArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryFeedbackArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -189,8 +279,21 @@ export type Room = {
   caller: Profile;
   /** Caller ID */
   callerId: Scalars['String'];
+  /** When call ended */
+  ended?: Maybe<Scalars['DateTime']>;
   /** Room Id */
   id: Scalars['String'];
+};
+
+export type SharedAttributeInput = {
+  /** email */
+  email: Scalars['Boolean'];
+  /** firstName */
+  firstName: Scalars['Boolean'];
+  /** lastName */
+  lastName: Scalars['Boolean'];
+  /** phoneNumber */
+  phoneNumber: Scalars['Boolean'];
 };
 
 export type SignUp = Login | RequestResponse;
@@ -198,6 +301,26 @@ export type SignUp = Login | RequestResponse;
 export type Subscription = {
   __typename?: 'Subscription';
   roomCreated?: Maybe<Room>;
+};
+
+export type UpdateEncounterInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
+};
+
+export type UpdateFeedbackInput = {
+  /** Call Quality */
+  callQuality?: Maybe<Scalars['Float']>;
+  /** Whether someone wants to continue the encounter */
+  continuation?: Maybe<Scalars['Boolean']>;
+  id: Scalars['Int'];
+  /** Peer Rating */
+  peerRating?: Maybe<Scalars['Float']>;
+  /** Room ID */
+  roomId?: Maybe<Scalars['String']>;
+  /** Shared Attributes */
+  sharedAttributes?: Maybe<SharedAttributeInput>;
 };
 
 export type UpdateProfileDto = {
@@ -232,6 +355,13 @@ export type UserWaiting = {
   queuedAt: Scalars['String'];
 };
 
+export type CreateFeedbackMutationVariables = Exact<{
+  createFeedbackInput: CreateFeedbackInput;
+}>;
+
+
+export type CreateFeedbackMutation = { __typename?: 'Mutation', createFeedback: { __typename?: 'Feedback', id: string } };
+
 export type CreateProfileMutationVariables = Exact<{
   data: CreateProfileDto;
 }>;
@@ -247,12 +377,10 @@ export type CreateUserMutationVariables = Exact<{
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, fbUserId?: string | null | undefined, phoneNumber?: string | null | undefined } };
 
-export type DeleteRoomMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
+export type EncountersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DeleteRoomMutation = { __typename?: 'Mutation', removeRoom?: { __typename?: 'Room', id: string } | null | undefined };
+export type EncountersQuery = { __typename?: 'Query', findAllEncounters: Array<{ __typename?: 'Encounter', id?: string | null | undefined, firstName?: string | null | undefined, lastName?: string | null | undefined, email?: string | null | undefined, phoneNumber?: string | null | undefined }> };
 
 export type EnterRoomQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -265,6 +393,13 @@ export type FindRoomQueryVariables = Exact<{
 
 
 export type FindRoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: string, callerId: string, calleeId: string } };
+
+export type LeaveRoomMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type LeaveRoomMutation = { __typename?: 'Mutation', leaveRoom: { __typename?: 'Room', id: string } };
 
 export type LoginQueryVariables = Exact<{
   number: Scalars['String'];
@@ -306,6 +441,39 @@ export type VerifyCodeQueryVariables = Exact<{
 export type VerifyCodeQuery = { __typename?: 'Query', verifyCode?: { __typename?: 'CheckResponse', status: string, requestId: string, eventId: string, accessToken?: string | null | undefined } | null | undefined };
 
 
+export const CreateFeedbackDocument = gql`
+    mutation createFeedback($createFeedbackInput: CreateFeedbackInput!) {
+  createFeedback(createFeedbackInput: $createFeedbackInput) {
+    id
+  }
+}
+    `;
+export type CreateFeedbackMutationFn = Apollo.MutationFunction<CreateFeedbackMutation, CreateFeedbackMutationVariables>;
+
+/**
+ * __useCreateFeedbackMutation__
+ *
+ * To run a mutation, you first call `useCreateFeedbackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFeedbackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFeedbackMutation, { data, loading, error }] = useCreateFeedbackMutation({
+ *   variables: {
+ *      createFeedbackInput: // value for 'createFeedbackInput'
+ *   },
+ * });
+ */
+export function useCreateFeedbackMutation(baseOptions?: Apollo.MutationHookOptions<CreateFeedbackMutation, CreateFeedbackMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFeedbackMutation, CreateFeedbackMutationVariables>(CreateFeedbackDocument, options);
+      }
+export type CreateFeedbackMutationHookResult = ReturnType<typeof useCreateFeedbackMutation>;
+export type CreateFeedbackMutationResult = Apollo.MutationResult<CreateFeedbackMutation>;
+export type CreateFeedbackMutationOptions = Apollo.BaseMutationOptions<CreateFeedbackMutation, CreateFeedbackMutationVariables>;
 export const CreateProfileDocument = gql`
     mutation CreateProfile($data: CreateProfileDto!) {
   createProfile(data: $data) {
@@ -379,39 +547,44 @@ export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
-export const DeleteRoomDocument = gql`
-    mutation DeleteRoom($id: String!) {
-  removeRoom(id: $id) {
+export const EncountersDocument = gql`
+    query Encounters {
+  findAllEncounters {
     id
+    firstName
+    lastName
+    email
+    phoneNumber
   }
 }
     `;
-export type DeleteRoomMutationFn = Apollo.MutationFunction<DeleteRoomMutation, DeleteRoomMutationVariables>;
 
 /**
- * __useDeleteRoomMutation__
+ * __useEncountersQuery__
  *
- * To run a mutation, you first call `useDeleteRoomMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteRoomMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
+ * To run a query within a React component, call `useEncountersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEncountersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const [deleteRoomMutation, { data, loading, error }] = useDeleteRoomMutation({
+ * const { data, loading, error } = useEncountersQuery({
  *   variables: {
- *      id: // value for 'id'
  *   },
  * });
  */
-export function useDeleteRoomMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRoomMutation, DeleteRoomMutationVariables>) {
+export function useEncountersQuery(baseOptions?: Apollo.QueryHookOptions<EncountersQuery, EncountersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteRoomMutation, DeleteRoomMutationVariables>(DeleteRoomDocument, options);
+        return Apollo.useQuery<EncountersQuery, EncountersQueryVariables>(EncountersDocument, options);
       }
-export type DeleteRoomMutationHookResult = ReturnType<typeof useDeleteRoomMutation>;
-export type DeleteRoomMutationResult = Apollo.MutationResult<DeleteRoomMutation>;
-export type DeleteRoomMutationOptions = Apollo.BaseMutationOptions<DeleteRoomMutation, DeleteRoomMutationVariables>;
+export function useEncountersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EncountersQuery, EncountersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EncountersQuery, EncountersQueryVariables>(EncountersDocument, options);
+        }
+export type EncountersQueryHookResult = ReturnType<typeof useEncountersQuery>;
+export type EncountersLazyQueryHookResult = ReturnType<typeof useEncountersLazyQuery>;
+export type EncountersQueryResult = Apollo.QueryResult<EncountersQuery, EncountersQueryVariables>;
 export const EnterRoomDocument = gql`
     query EnterRoom {
   waitForRoom {
@@ -483,6 +656,39 @@ export function useFindRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<F
 export type FindRoomQueryHookResult = ReturnType<typeof useFindRoomQuery>;
 export type FindRoomLazyQueryHookResult = ReturnType<typeof useFindRoomLazyQuery>;
 export type FindRoomQueryResult = Apollo.QueryResult<FindRoomQuery, FindRoomQueryVariables>;
+export const LeaveRoomDocument = gql`
+    mutation LeaveRoom($id: String!) {
+  leaveRoom(id: $id) {
+    id
+  }
+}
+    `;
+export type LeaveRoomMutationFn = Apollo.MutationFunction<LeaveRoomMutation, LeaveRoomMutationVariables>;
+
+/**
+ * __useLeaveRoomMutation__
+ *
+ * To run a mutation, you first call `useLeaveRoomMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLeaveRoomMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [leaveRoomMutation, { data, loading, error }] = useLeaveRoomMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLeaveRoomMutation(baseOptions?: Apollo.MutationHookOptions<LeaveRoomMutation, LeaveRoomMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LeaveRoomMutation, LeaveRoomMutationVariables>(LeaveRoomDocument, options);
+      }
+export type LeaveRoomMutationHookResult = ReturnType<typeof useLeaveRoomMutation>;
+export type LeaveRoomMutationResult = Apollo.MutationResult<LeaveRoomMutation>;
+export type LeaveRoomMutationOptions = Apollo.BaseMutationOptions<LeaveRoomMutation, LeaveRoomMutationVariables>;
 export const LoginDocument = gql`
     query Login($number: String!, $password: String!) {
   login(number: $number, password: $password) {

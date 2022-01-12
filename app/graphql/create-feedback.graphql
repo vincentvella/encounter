@@ -1,0 +1,5 @@
+mutation createFeedback($createFeedbackInput: CreateFeedbackInput!) {
+  createFeedback(createFeedbackInput: $createFeedbackInput) {
+    id
+  }
+}

@@ -73,13 +73,16 @@ type UserWaiting {
 }
 
 type Feedback {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """Encounter ID"""
+  id: String!
 }
 
 type Encounter {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  firstName: String
+  lastName: String
+  email: String
+  phoneNumber: String
+  id: String
 }
 
 type Query {
@@ -94,6 +97,7 @@ type Query {
   room(id: String!): Room!
   userWaiting(id: Int!): UserWaiting!
   feedback(id: Int!): Feedback!
+  findAllEncounters: [Encounter!]!
   encounter(id: Int!): Encounter!
 }
 
@@ -112,6 +116,7 @@ type Mutation {
   createRoom(createRoomInput: CreateRoomInput!): Room!
   updateRoom(updateRoomInput: UpdateRoomInput!): Room!
   removeRoom(id: String!): Room
+  leaveRoom(id: String!): Room!
   createUserWaiting(ProfileId: String!): UserWaiting!
   removeUserWaiting(id: Int!): UserWaiting!
   createFeedback(createFeedbackInput: CreateFeedbackInput!): Feedback!
@@ -158,13 +163,51 @@ input UpdateRoomInput {
 }
 
 input CreateFeedbackInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """Room ID"""
+  roomId: String!
+
+  """Whether someone wants to continue the encounter"""
+  continuation: Boolean!
+
+  """Peer Rating"""
+  peerRating: Float = 0
+
+  """Call Quality"""
+  callQuality: Float = 0
+
+  """Shared Attributes"""
+  sharedAttributes: SharedAttributeInput!
+}
+
+input SharedAttributeInput {
+  """firstName"""
+  firstName: Boolean!
+
+  """lastName"""
+  lastName: Boolean!
+
+  """email"""
+  email: Boolean!
+
+  """phoneNumber"""
+  phoneNumber: Boolean!
 }
 
 input UpdateFeedbackInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  """Room ID"""
+  roomId: String
+
+  """Whether someone wants to continue the encounter"""
+  continuation: Boolean
+
+  """Peer Rating"""
+  peerRating: Float = 0
+
+  """Call Quality"""
+  callQuality: Float = 0
+
+  """Shared Attributes"""
+  sharedAttributes: SharedAttributeInput
   id: Int!
 }
 

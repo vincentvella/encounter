@@ -52,6 +52,15 @@ export class RoomService {
     return `This action updates a #${id} room`;
   }
 
+  async end(id: string) {
+    try {
+      const room = await this.prisma.room.update({ where: { id }, data: { ended: new Date() } })
+      return room
+    } catch (err) {
+      return this.prisma.room.findFirst({ where: { id } })
+    }
+  }
+
   /**
    * Delete's User's Room
    * @param id Room ID

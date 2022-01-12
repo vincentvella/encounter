@@ -3,14 +3,16 @@ import { FeedbackService } from './feedback.service';
 import { Feedback } from './entities/feedback.entity';
 import { CreateFeedbackInput } from './dto/create-feedback.input';
 import { UpdateFeedbackInput } from './dto/update-feedback.input';
+import { CurrentUser } from 'src/user/user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @Resolver(() => Feedback)
 export class FeedbackResolver {
-  constructor(private readonly feedbackService: FeedbackService) {}
+  constructor(private readonly feedbackService: FeedbackService) { }
 
   @Mutation(() => Feedback)
-  createFeedback(@Args('createFeedbackInput') createFeedbackInput: CreateFeedbackInput) {
-    return this.feedbackService.create(createFeedbackInput);
+  createFeedback(@Args('createFeedbackInput') createFeedbackInput: CreateFeedbackInput, @CurrentUser() user: User) {
+    return this.feedbackService.create(createFeedbackInput, user);
   }
 
   @Query(() => [Feedback], { name: 'feedback' })

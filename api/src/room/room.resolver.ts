@@ -75,4 +75,9 @@ export class RoomResolver {
   removeRoom(@Args('id', { type: () => String }) id: string) {
     return this.roomService.remove(id);
   }
+
+  @Mutation(() => Room)
+  leaveRoom(@Args('id', { type: () => String }) id: string) {
+    return this.roomService.end(id);
+  }
 }

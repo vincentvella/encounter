@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { AuthenticatedRootNavigationProp, AuthenticatedRootRouteProp, } from '../services/navigation/types';
 import VideoChat, { globalCall, globalCallRef } from '../components/call/call'
 import CallService from '../services/call'
-import { useDeleteRoomMutation, useFindRoomQuery, useProfileQuery, useRoomForUserQuery } from '../generated/types';
+import { useFindRoomQuery, useLeaveRoomMutation, useProfileQuery, useRoomForUserQuery } from '../generated/types';
 
 const Call = () => {
   const Chat = React.useRef(new CallService())
@@ -13,15 +13,13 @@ const Call = () => {
   const route = useRoute<AuthenticatedRootRouteProp<'call'>>()
   const { data: roomData } = useFindRoomQuery({ variables: { id: route.params.id } })
   const navigation = useNavigation<AuthenticatedRootNavigationProp>()
-  const [deleteRoom] = useDeleteRoomMutation()
+  const [leaveRoom] = useLeaveRoomMutation()
 
   useFocusEffect(React.useCallback(() => {
     return () => {
-      try {
-        deleteRoom({ variables: { id: route.params.id } })
-      } catch (_) { }
+      leaveRoom({ variables: { id: route.params.id } })
     }
-  }, [deleteRoom, route.params]))
+  }, [leaveRoom, route.params]))
 
   React.useEffect(() => {
     if (data) {
