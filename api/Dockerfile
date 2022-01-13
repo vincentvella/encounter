@@ -10,6 +10,9 @@ COPY prisma ./prisma/
 
 # Install usr/src/account dependencies
 RUN yarn
+# Rebuild argon2 from source
+RUN npm install -g node-pre-gyp
+RUN node-pre-gyp rebuild -C ./node_modules/argon2
 
 COPY . .
 
