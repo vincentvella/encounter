@@ -1,5 +1,6 @@
 yarn
 
+npm install -g expo-cli
 npm install -g sharp-cli
 
 # Optimize expo images
