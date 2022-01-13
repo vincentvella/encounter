@@ -1,3 +1,5 @@
+yarn
+
 # Optimize expo images
 npx expo-optimize
 
