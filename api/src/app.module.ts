@@ -14,6 +14,7 @@ import { BullModule } from '@nestjs/bull';
 import { UserWaitingModule } from './user-waiting/user-waiting.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { EncounterModule } from './encounter/encounter.module';
+import { HealthzController } from './healthz/healthz.controller';
 
 
 @Module({
@@ -43,8 +44,9 @@ import { EncounterModule } from './encounter/encounter.module';
     }),
     BullModule.forRoot({
       redis: {
-        host: 'localhost',
-        port: 6379,
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT, 10),
+        password: process.env.REDIS_PASSWORD
       },
     }),
     PrismaModule,
@@ -65,6 +67,7 @@ import { EncounterModule } from './encounter/encounter.module';
       provide: APP_GUARD,
       useClass: RolesGuard
     },
-  ]
+  ],
+  controllers: [HealthzController]
 })
 export class AppModule { }
