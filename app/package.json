@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build:web": "./scripts/deploy.sh",
     "start": "expo start --dev-client --web",
     "android": "expo run:android --no-bundler",
     "ios": "expo run:ios --no-bundler",

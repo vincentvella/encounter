@@ -6,6 +6,7 @@ import {
 } from '@apollo/client/core';
 import { print, GraphQLError } from 'graphql';
 import { createClient, ClientOptions, Client } from 'graphql-ws';
+import Constants from 'expo-constants';
 import Cookie from '../../storage/cookie';
 
 class WebSocketLink extends ApolloLink {
@@ -80,8 +81,15 @@ class WebSocketLink extends ApolloLink {
   }
 }
 
+const getUrl = () => {
+  if (!Constants.manifest?.extra?.apiUrl.includes('onrender')) {
+    return `wss://${Constants.manifest?.extra?.apiUrl}`
+  }
+  return `ws://${Constants.manifest?.extra?.apiUrl}`
+}
+
 const ws = new WebSocketLink({
-  url: 'ws://encounter-dev-1.loca.lt/graphql',
+  url: getUrl(),
   connectionParams: () => {
     const token = Cookie.get('jwt')
     return {
