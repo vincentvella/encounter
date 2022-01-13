@@ -1,3 +1,5 @@
+echo "$API_URL"
+
 yarn
 
 # Optimize expo images

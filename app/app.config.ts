@@ -63,6 +63,8 @@ export default {
   },
   extra: {
     // Fall back to development URL when not set
-    apiUrl: process.env.API_URL ?? 'encounter-dev-1.loca.lt/graphql'
+    apiUrl: process.env.API_URL || 'encounter-dev-1.loca.lt/graphql'
   }
 }
+
+console.log(process.env)
