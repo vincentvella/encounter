@@ -5439,6 +5439,11 @@ expo-modules-core@0.6.3:
     compare-versions "^3.4.0"
     invariant "^2.2.4"
 
+expo-optimize@^0.2.8:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/expo-optimize/-/expo-optimize-0.2.8.tgz#6239a994f7a3a51c239c73bf2feba9bb8960b644"
+  integrity sha512-9Y0dISp9OIzidfS2tHj8SnYcNiKSp/i6c1oo2TFtsudY3sIsXcf3YucOJFCyVr1ImTNkuhyDuap24Syv76I6OQ==
+
 expo-permissions@~13.1.0:
   version "13.1.0"
   resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-13.1.0.tgz#1be8fe01476950d642ea83d383fd8912492434b9"
