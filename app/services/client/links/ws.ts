@@ -81,11 +81,13 @@ class WebSocketLink extends ApolloLink {
   }
 }
 
+console.log('extra', process.env)
+
 const getUrl = () => {
-  if (!Constants.manifest?.extra?.apiUrl.includes('onrender')) {
-    return `wss://${Constants.manifest?.extra?.apiUrl}`
+  if (!(process.env.API_URL || '').includes('onrender')) {
+    return `wss://${process.env.API_URL}`
   }
-  return `ws://${Constants.manifest?.extra?.apiUrl}`
+  return `ws://${process.env.API_URL}`
 }
 
 const ws = new WebSocketLink({
